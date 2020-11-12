@@ -33,6 +33,7 @@ cc.Class({
             type: cc.ProgressBar,
             default: null,
         },
+        loadingLabel:cc.Label,
         loginButton: {
             type: cc.Button,
             default: null,
@@ -50,24 +51,22 @@ cc.Class({
     },
 
     start () {
-
     },
 
     onLogin: function(){
         this.loadingBar.node.active = true;
         this.loginButton.node.active = false;
         this.loadingBar.progress = 0;
-        let backup = cc.loader.onProgress;
-        cc.loader.onProgress = function (count, amount) {
-            this.loadingBar.progress = count / amount;
-        }.bind(this);
 
-        cc.director.preloadScene("Game", function () {
-            cc.loader.onProgress = backup;
-            this.loadingBar.node.active = false;
-            this.loginButton.node.active = true;
+        cc.director.preloadScene("Game", function (completed, total, item) {
+            let prog = completed / total;
+            if (this.loadingBar.progress < prog) {
+                this.loadingBar.progress = prog;
+                this.loadingLabel.string = `${Math.floor(prog * 100)}%`;
+            }
+        }.bind(this), function (err, res) {
             cc.director.loadScene("Game");
-        }.bind(this));
+        })
     },
 
     onDestroy: function(){
