@@ -1,4 +1,4 @@
-import {CELL_WIDTH, CELL_HEIGHT, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT, ANITIME} from '../Model/ConstValue';
+import {CELL_WIDTH, CELL_HEIGHT, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT, ANITIME, GRID_WIDTH, GRID_HEIGHT} from '../Model/ConstValue';
 
 import AudioUtils from "../Utils/AudioUtils";
 
@@ -45,12 +45,14 @@ cc.Class({
 
     initWithCellModels: function(cellsModels){
         this.cellViews = [];
-        for(var i = 1;i<=9;i++){
+
+        for(var i = 1;i<=GRID_WIDTH;i++){
             this.cellViews[i] = [];
-            for(var j = 1;j<=9;j++){
+            for(var j = 1;j<=GRID_HEIGHT;j++){
                 var type = cellsModels[i][j].type;
                 var aniView = cc.instantiate(this.aniPre[type]);
                 aniView.parent = this.node;
+                aniView.type = type;
                 var cellViewScript = aniView.getComponent("CellView");
                 cellViewScript.initWithModel(cellsModels[i][j]);
                 this.cellViews[i][j] = aniView;
@@ -115,6 +117,7 @@ cc.Class({
                 var type = model.type;
                 var aniView = cc.instantiate(this.aniPre[type]);
                 aniView.parent = this.node;
+                aniView.type = type;
                 var cellViewScript = aniView.getComponent("CellView");
                 cellViewScript.initWithModel(model);
                 view = aniView;
@@ -141,8 +144,8 @@ cc.Class({
     },
     // 显示选中的格子背景
     updateSelect: function(pos){
-         for(var i = 1;i <=9 ;i++){
-            for(var j = 1 ;j <=9 ;j ++){
+         for(var i = 1;i <=GRID_WIDTH ;i++){
+            for(var j = 1 ;j <=GRID_HEIGHT ;j ++){
                 if(this.cellViews[i][j]){
                     var cellScript = this.cellViews[i][j].getComponent("CellView");
                     if(pos.x == j && pos.y ==i){
@@ -161,8 +164,8 @@ cc.Class({
      * 根据cell的model返回对应的view
      */
     findViewByModel: function(model){
-        for(var i = 1;i <=9 ;i++){
-            for(var j = 1 ;j <=9 ;j ++){
+        for(var i = 1;i <=GRID_WIDTH ;i++){
+            for(var j = 1 ;j <=GRID_HEIGHT ;j ++){
                 if(this.cellViews[i][j] && this.cellViews[i][j].getComponent("CellView").model == model){
                     return {view:this.cellViews[i][j],x:j, y:i};
                 }
@@ -202,6 +205,55 @@ cc.Class({
         this.node.runAction(cc.sequence(cc.delayTime(time),cc.callFunc(function(){
             this.isInPlayAni = false;
             this.audioUtils.playContinuousMatch(step);
+            
+            let cellViews = [];
+            for (let i=1;i<=GRID_WIDTH; i++) {
+                for (let j=1;j<=GRID_HEIGHT; j++) {
+                    let views = this.cellViews[i][j];
+                    cc.log(views.name + "  ");
+                    if (this.cellViews[i+1] != null && this.cellViews[i+2] != null) {
+                        if (this.cellViews[i+1][j].type == views.type) {
+                            cellViews[(i+2).toString()+j] = {view:this.cellViews[i+2][j],x:i+2,y:j,type:views.type};
+                        }
+                        else if (this.cellViews[i+2][j].type == views.type) {
+                            cellViews[(i+1).toString()+j] = {view:this.cellViews[i+1][j],x:i+1, y:j,type:views.type};
+                        }
+                    }
+
+                    if (this.cellViews[i][j+1] != null && this.cellViews[i][j+2] != null) {
+                        if (this.cellViews[i][j+1].type == views.type) {
+                            cellViews[i.toString()+(j+2)] = {view:this.cellViews[i][j+2],x:i,y:j+2,type:views.type};
+                        }
+                        else if (this.cellViews[i][j+2].type == views.type) {
+                            cellViews[i.toString()+(j+1)] = {view:this.cellViews[i][j+1],x:i,y:j+1,type:views.type};
+                        }
+                    }
+                }
+
+                cc.log("");
+            }
+            
+            for (let key in cellViews) {
+                let view = cellViews[key];
+                if (this.cellViews[view.x-1] && this.cellViews[view.x-1][view.y].type == view.type) {
+                    view.view.getComponent("CellView").toTipsLeft(ANITIME.TIPS);
+                    this.cellViews[view.x-1][view.y].getComponent("CellView").toTipsRight(ANITIME.TIPS);
+                }
+                else if (this.cellViews[view.x+1] && this.cellViews[view.x+1][view.y].type == view.type) {
+                    view.view.getComponent("CellView").toTipsRight(ANITIME.TIPS);
+                    this.cellViews[view.x+1][view.y].getComponent("CellView").toTipsLeft(ANITIME.TIPS);
+                }
+                else if (this.cellViews[view.x][view.y-1] && this.cellViews[view.x][view.y-1].type == view.type) {
+                    view.view.getComponent("CellView").toTipsUp(ANITIME.TIPS);
+                    this.cellViews[view.x][view.y-1].getComponent("CellView").toTipsDown(ANITIME.TIPS);
+                }
+                else if (this.cellViews[view.x][view.y+1] && this.cellViews[view.x][view.y+1].type == view.type) {
+                    view.view.getComponent("CellView").toTipsDown(ANITIME.TIPS);
+                    this.cellViews[view.x][view.y+1].getComponent("CellView").toTipsUp(ANITIME.TIPS);
+                }
+            }
+
+            this.controller.cleanCmd();
         }, this)));
     },
     // 正常击中格子后的操作
@@ -226,9 +278,6 @@ cc.Class({
     playEffect: function(effectsQueue){
         this.effectLayer.getComponent("EffectLayer").playEffects(effectsQueue);
     }
-
-
-
 
     // called every frame, uncomment this function to activate update callback
     // update: function (dt) {

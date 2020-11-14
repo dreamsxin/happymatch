@@ -54,7 +54,7 @@ export default class CellModel {
     }
 
     moveTo(pos, playTime) {
-        var srcPos = cc.v2(this.x, this.y); 
+        var srcPos = cc.v2(this.x, this.y);
         this.cmd.push({
             action: "moveTo",
             keepTime: ANITIME.TOUCH_MOVE,
@@ -81,6 +81,35 @@ export default class CellModel {
             keepTime: ANITIME.DIE_SHAKE
         });
     }
+
+    // toTipsLeft(playTime) {
+    //     this.cmd.push({
+    //         action: "toTipsLeft",
+    //         playTime: playTime,
+    //         keepTime: ANITIME.TIPS
+    //     });
+    // }
+    // toTipsRight(playTime) {
+    //     this.cmd.push({
+    //         action: "toTipsRight",
+    //         playTime: playTime,
+    //         keepTime: ANITIME.TIPS
+    //     });
+    // }
+    // toTipsUp(playTime) {
+    //     this.cmd.push({
+    //         action: "toTipsUp",
+    //         playTime: playTime,
+    //         keepTime: ANITIME.TIPS
+    //     });
+    // }
+    // toTipsDown(playTime) {
+    //     this.cmd.push({
+    //         action: "toTipsDown",
+    //         playTime: playTime,
+    //         keepTime: ANITIME.TIPS
+    //     });
+    // }
 
     setVisible(playTime, isVisible) {
         this.cmd.push({

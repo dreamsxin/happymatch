@@ -24,6 +24,7 @@ cc.Class({
     onLoad: function () {
         //this.model = null;
         this.isSelect = false;
+        this.actionArray = [];
     },
     initWithModel: function(model){
         this.model = model;
@@ -85,6 +86,7 @@ cc.Class({
                 let rotateLeft = cc.rotateBy(0.12, -60);
                 actionArray.push(cc.repeat(cc.sequence(rotateRight, rotateLeft, rotateRight), 2));
             }
+
             curTime = cmd[i].playTime + cmd[i].keepTime;
         }
         /**
@@ -117,5 +119,48 @@ cc.Class({
         }
         bg.active = flag; 
         this.isSelect = flag;
+
+        this.actionArray = [];
+    },
+
+    toTipsLeft(playTime) {
+        if (this.actionArray.length > 1) {
+            return;
+        }
+
+        var move = cc.moveTo(playTime, cc.v2(this.node.x-0.025*CELL_WIDTH, this.node.y));
+        var repeat = cc.moveTo(0, cc.v2(this.node.x, this.node.y));
+        this.actionArray.push(cc.repeatForever(cc.sequence(move, repeat)));
+        this.node.runAction(this.actionArray[0]);
+    },
+    toTipsRight(playTime) {
+        if (this.actionArray.length > 1) {
+            return;
+        }
+
+        var move = cc.moveTo(playTime, cc.v2(this.node.x+0.025*CELL_WIDTH, this.node.y));
+        var repeat = cc.moveTo(0, cc.v2(this.node.x, this.node.y));
+        this.actionArray.push(cc.repeatForever(cc.sequence(move, repeat)));
+        this.node.runAction(this.actionArray[0]);
+    },
+    toTipsUp(playTime) {
+        if (this.actionArray.length > 1) {
+            return;
+        }
+
+        var move = cc.moveTo(playTime, cc.v2(this.node.x, this.node.y+0.025*CELL_HEIGHT));
+        var repeat = cc.moveTo(0, cc.v2(this.node.x, this.node.y));
+        this.actionArray.push(cc.repeatForever(cc.sequence(move, repeat)));
+        this.node.runAction(this.actionArray[0]);
+    },
+    toTipsDown(playTime) {
+        if (this.actionArray.length > 1) {
+            return;
+        }
+
+        var move = cc.moveTo(playTime, cc.v2(this.node.x, this.node.y-0.025*CELL_HEIGHT));
+        var repeat = cc.moveTo(0, cc.v2(this.node.x, this.node.y));
+        this.actionArray.push(cc.repeatForever(cc.sequence(move, repeat)));
+        this.node.runAction(this.actionArray[0]);
     }
 });
