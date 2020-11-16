@@ -24,7 +24,6 @@ cc.Class({
     onLoad: function () {
         //this.model = null;
         this.isSelect = false;
-        this.actionArray = [];
     },
     initWithModel: function(model){
         this.model = model;
@@ -46,6 +45,9 @@ cc.Class({
         if(cmd.length <= 0){
             return ;
         }
+
+        this.node.stopActionByTag(ANITIME.TIPS_ACTION_TAG);
+    
         var actionArray = [];
         var curTime = 0;
         for(var i in cmd){
@@ -119,48 +121,26 @@ cc.Class({
         }
         bg.active = flag; 
         this.isSelect = flag;
-
-        this.actionArray = [];
     },
 
     toTipsLeft(playTime) {
-        if (this.actionArray.length > 1) {
-            return;
-        }
-
         var move = cc.moveTo(playTime, cc.v2(this.node.x-0.025*CELL_WIDTH, this.node.y));
         var repeat = cc.moveTo(0, cc.v2(this.node.x, this.node.y));
-        this.actionArray.push(cc.repeatForever(cc.sequence(move, repeat)));
-        this.node.runAction(this.actionArray[0]);
+        this.node.runAction(cc.repeatForever(cc.sequence(move, repeat))).setTag(ANITIME.TIPS_ACTION_TAG);
     },
     toTipsRight(playTime) {
-        if (this.actionArray.length > 1) {
-            return;
-        }
-
         var move = cc.moveTo(playTime, cc.v2(this.node.x+0.025*CELL_WIDTH, this.node.y));
         var repeat = cc.moveTo(0, cc.v2(this.node.x, this.node.y));
-        this.actionArray.push(cc.repeatForever(cc.sequence(move, repeat)));
-        this.node.runAction(this.actionArray[0]);
+        this.node.runAction(cc.repeatForever(cc.sequence(move, repeat))).setTag(ANITIME.TIPS_ACTION_TAG);
     },
     toTipsUp(playTime) {
-        if (this.actionArray.length > 1) {
-            return;
-        }
-
         var move = cc.moveTo(playTime, cc.v2(this.node.x, this.node.y+0.025*CELL_HEIGHT));
         var repeat = cc.moveTo(0, cc.v2(this.node.x, this.node.y));
-        this.actionArray.push(cc.repeatForever(cc.sequence(move, repeat)));
-        this.node.runAction(this.actionArray[0]);
+        this.node.runAction(cc.repeatForever(cc.sequence(move, repeat))).setTag(ANITIME.TIPS_ACTION_TAG);
     },
     toTipsDown(playTime) {
-        if (this.actionArray.length > 1) {
-            return;
-        }
-
         var move = cc.moveTo(playTime, cc.v2(this.node.x, this.node.y-0.025*CELL_HEIGHT));
         var repeat = cc.moveTo(0, cc.v2(this.node.x, this.node.y));
-        this.actionArray.push(cc.repeatForever(cc.sequence(move, repeat)));
-        this.node.runAction(this.actionArray[0]);
+        this.node.runAction(cc.repeatForever(cc.sequence(move, repeat))).setTag(ANITIME.TIPS_ACTION_TAG);
     }
 });

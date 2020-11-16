@@ -28,7 +28,6 @@ export const CELL_HEIGHT = 70;
 export const GRID_PIXEL_WIDTH = GRID_WIDTH * CELL_WIDTH;
 export const GRID_PIXEL_HEIGHT = GRID_HEIGHT * CELL_HEIGHT;
 
-
 // ********************   时间表  animation time **************************
 export const ANITIME = {
     TOUCH_MOVE: 0.3,
@@ -37,7 +36,8 @@ export const ANITIME = {
     BOMB_DELAY: 0.3,
     BOMB_BIRD_DELAY: 0.7,
     DIE_SHAKE: 0.4, // 死前抖动
-    TIPS:0.2
+    TIPS:0.2,
+    TIPS_ACTION_TAG:10000
 }
 
 

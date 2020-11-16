@@ -38,6 +38,7 @@ cc.Class({
         this.lastTouchPos = cc.Vec2(-1, -1);
         this.isCanMove = true;
         this.isInPlayAni = false; // 是否在播放中
+
     },
     setController: function(controller){
         this.controller = controller;
@@ -58,12 +59,17 @@ cc.Class({
                 this.cellViews[i][j] = aniView;
             }
         }
+
+        this.tips();
     },
     setListener: function(){
         this.node.on(cc.Node.EventType.TOUCH_START, function(eventTouch){
             if(this.isInPlayAni){//播放动画中，不允许点击
                 return true;
             }
+
+            this.tips();
+
             var touchPos = eventTouch.getLocation();
             var cellPos = this.convertTouchPosToCell(touchPos);
             if(cellPos){
@@ -73,11 +79,14 @@ cc.Class({
             else{
                 this.isCanMove = false;
             }
+
            return true;
         }, this);
         // 滑动操作逻辑
         this.node.on(cc.Node.EventType.TOUCH_MOVE, function(eventTouch){
            if(this.isCanMove){
+                this.stopTipsActions();
+
                var startTouchPos = eventTouch.getStartLocation ();
                var startCellPos = this.convertTouchPosToCell(startTouchPos);
                var touchPos = eventTouch.getLocation();
@@ -196,6 +205,81 @@ cc.Class({
             return Math.max(maxValue, efffectCmd.step || 0);
         }, 0);
     },
+    tips() {
+        this.stopTipsActions();
+        
+        this.node.runAction(cc.sequence(cc.delayTime(5),cc.callFunc(function(){
+            let cellViews = [];
+            for (let i=1;i<=GRID_WIDTH; i++) {
+                for (let j=1;j<=GRID_HEIGHT; j++) {
+                    let views = this.cellViews[i][j];
+                    if (this.cellViews[i+1] != null && this.cellViews[i+2] != null) {
+                        if (this.cellViews[i+1][j].type == views.type) {
+                            cellViews[(i+2).toString()+j] = {view:this.cellViews[i+2][j],x:i+2,y:j,type:views.type,isY:true,isXIndex:true};
+                        }
+                        else if (this.cellViews[i+2][j].type == views.type) {
+                            cellViews[(i+1).toString()+j] = {view:this.cellViews[i+1][j],x:i+1, y:j,type:views.type,isY:true};
+                        }
+                    }
+
+                    if (this.cellViews[i][j+1] != null && this.cellViews[i][j+2] != null) {
+                        if (this.cellViews[i][j+1].type == views.type) {
+                            cellViews[i.toString()+(j+2)] = {view:this.cellViews[i][j+2],x:i,y:j+2,type:views.type,isX:true,isYIndex:true};
+                        }
+                        else if (this.cellViews[i][j+2].type == views.type) {
+                            cellViews[i.toString()+(j+1)] = {view:this.cellViews[i][j+1],x:i,y:j+1,type:views.type,isX:true};
+                        }
+                    }
+                }
+            }
+            
+            for (let key in cellViews) {
+                let view = cellViews[key];
+                if (view.isX) {
+                    if (this.cellViews[view.x-1] && this.cellViews[view.x-1][view.y].type == view.type) {
+                        view.view.getComponent("CellView").toTipsUp(ANITIME.TIPS);
+                        this.cellViews[view.x-1][view.y].getComponent("CellView").toTipsDown(ANITIME.TIPS);
+                        break;
+                    }
+                    else if (this.cellViews[view.x+1] && this.cellViews[view.x+1][view.y].type == view.type) {
+                        view.view.getComponent("CellView").toTipsDown(ANITIME.TIPS);
+                        this.cellViews[view.x+1][view.y].getComponent("CellView").toTipsUp(ANITIME.TIPS);
+                        break;
+                    }
+                    else if (view.isYIndex && this.cellViews[view.x][view.y+1] && this.cellViews[view.x][view.y+1].type == view.type) {
+                        view.view.getComponent("CellView").toTipsRight(ANITIME.TIPS);
+                        this.cellViews[view.x][view.y+1].getComponent("CellView").toTipsDown(ANITIME.TIPS);
+                        break;
+                    }
+                }
+                else if (view.isY) {
+                    if (this.cellViews[view.x][view.y-1] && this.cellViews[view.x][view.y-1].type == view.type) {
+                        view.view.getComponent("CellView").toTipsLeft(ANITIME.TIPS);
+                        this.cellViews[view.x][view.y-1].getComponent("CellView").toTipsRight(ANITIME.TIPS);
+                        break;
+                    }
+                    else if (this.cellViews[view.x][view.y+1] && this.cellViews[view.x][view.y+1].type == view.type) {
+                        view.view.getComponent("CellView").toTipsRight(ANITIME.TIPS);
+                        this.cellViews[view.x][view.y+1].getComponent("CellView").toTipsDown(ANITIME.TIPS);
+                        break;
+                    }
+                    else if (view.isXIndex && this.cellViews[view.x+1] && this.cellViews[view.x+1][view.y].type == view.type) {
+                        view.view.getComponent("CellView").toTipsDown(ANITIME.TIPS);
+                        this.cellViews[view.x+1][view.y].getComponent("CellView").toTipsUp(ANITIME.TIPS);
+                        break;
+                    }
+                }
+            }
+        }, this))).setTag(ANITIME.TIPS_ACTION_TAG);
+    },
+    stopTipsActions: function(){
+        this.node.stopActionByTag(ANITIME.TIPS_ACTION_TAG);
+        for(var i = 1;i <=GRID_WIDTH ;i++){
+            for(var j = 1 ;j <=GRID_HEIGHT ;j ++){
+                this.cellViews[i][j].stopActionByTag(ANITIME.TIPS_ACTION_TAG);
+            }
+        }
+    },
     //一段时间内禁止操作
     disableTouch: function(time, step){
         if(time <= 0){
@@ -205,53 +289,8 @@ cc.Class({
         this.node.runAction(cc.sequence(cc.delayTime(time),cc.callFunc(function(){
             this.isInPlayAni = false;
             this.audioUtils.playContinuousMatch(step);
-            
-            let cellViews = [];
-            for (let i=1;i<=GRID_WIDTH; i++) {
-                for (let j=1;j<=GRID_HEIGHT; j++) {
-                    let views = this.cellViews[i][j];
-                    cc.log(views.name + "  ");
-                    if (this.cellViews[i+1] != null && this.cellViews[i+2] != null) {
-                        if (this.cellViews[i+1][j].type == views.type) {
-                            cellViews[(i+2).toString()+j] = {view:this.cellViews[i+2][j],x:i+2,y:j,type:views.type};
-                        }
-                        else if (this.cellViews[i+2][j].type == views.type) {
-                            cellViews[(i+1).toString()+j] = {view:this.cellViews[i+1][j],x:i+1, y:j,type:views.type};
-                        }
-                    }
 
-                    if (this.cellViews[i][j+1] != null && this.cellViews[i][j+2] != null) {
-                        if (this.cellViews[i][j+1].type == views.type) {
-                            cellViews[i.toString()+(j+2)] = {view:this.cellViews[i][j+2],x:i,y:j+2,type:views.type};
-                        }
-                        else if (this.cellViews[i][j+2].type == views.type) {
-                            cellViews[i.toString()+(j+1)] = {view:this.cellViews[i][j+1],x:i,y:j+1,type:views.type};
-                        }
-                    }
-                }
-
-                cc.log("");
-            }
-            
-            for (let key in cellViews) {
-                let view = cellViews[key];
-                if (this.cellViews[view.x-1] && this.cellViews[view.x-1][view.y].type == view.type) {
-                    view.view.getComponent("CellView").toTipsLeft(ANITIME.TIPS);
-                    this.cellViews[view.x-1][view.y].getComponent("CellView").toTipsRight(ANITIME.TIPS);
-                }
-                else if (this.cellViews[view.x+1] && this.cellViews[view.x+1][view.y].type == view.type) {
-                    view.view.getComponent("CellView").toTipsRight(ANITIME.TIPS);
-                    this.cellViews[view.x+1][view.y].getComponent("CellView").toTipsLeft(ANITIME.TIPS);
-                }
-                else if (this.cellViews[view.x][view.y-1] && this.cellViews[view.x][view.y-1].type == view.type) {
-                    view.view.getComponent("CellView").toTipsUp(ANITIME.TIPS);
-                    this.cellViews[view.x][view.y-1].getComponent("CellView").toTipsDown(ANITIME.TIPS);
-                }
-                else if (this.cellViews[view.x][view.y+1] && this.cellViews[view.x][view.y+1].type == view.type) {
-                    view.view.getComponent("CellView").toTipsDown(ANITIME.TIPS);
-                    this.cellViews[view.x][view.y+1].getComponent("CellView").toTipsUp(ANITIME.TIPS);
-                }
-            }
+            this.tips();
 
             this.controller.cleanCmd();
         }, this)));
