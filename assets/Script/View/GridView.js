@@ -27,8 +27,8 @@ cc.Class({
         audioUtils:{
             type: AudioUtils,
             default: null
-        }
-        
+        },
+        itemsScrollview:cc.ScrollView
     },
 
 
@@ -38,7 +38,7 @@ cc.Class({
         this.lastTouchPos = cc.Vec2(-1, -1);
         this.isCanMove = true;
         this.isInPlayAni = false; // 是否在播放中
-
+        this.itemsScrollview = this.itemsScrollview.getComponent("itemsScrollview");
     },
     setController: function(controller){
         this.controller = controller;
@@ -296,8 +296,8 @@ cc.Class({
         }, this)));
     },
     // 正常击中格子后的操作
-    selectCell: function(cellPos){
-        var result = this.controller.selectCell(cellPos); // 直接先丢给model处理数据逻辑
+    selectCell: function(cellPos) {
+        var result = this.itemsScrollview.isHammer ? this.controller.hammerSelectCell(cellPos) : this.controller.selectCell(cellPos); // 直接先丢给model处理数据逻辑
         var changeModels = result[0]; // 有改变的cell，包含新生成的cell和生成马上摧毁的格子
         var effectsQueue = result[1]; //各种特效
         this.playEffect(effectsQueue);
@@ -311,6 +311,11 @@ cc.Class({
         else{
             this.updateSelect(cellPos);
             this.audioUtils.playClick();
+        }
+
+        if (this.itemsScrollview.isHammer) {
+            this.itemsScrollview.isHammer = false;
+            this.itemsScrollview.setHammer(this.itemsScrollview.getHammer()-1);
         }
         return changeModels;
     },

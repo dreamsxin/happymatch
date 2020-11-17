@@ -32,6 +32,9 @@ cc.Class({
     selectCell: function(pos){
         return this.gameModel.selectCell(pos);
     },
+    hammerSelectCell(pos) {
+        return this.gameModel.hammerSelectCell(pos);
+    },
     cleanCmd: function(){
         this.gameModel.cleanCmd();
     }

@@ -135,7 +135,7 @@ export default class GameModel {
             return [[], []];
         }
         let curClickCell = this.cells[pos.y][pos.x]; //当前点击的格子
-        let lastClickCell = this.cells[lastPos.y][lastPos.x]; // 上一次点击的格式
+        let lastClickCell = this.cells[lastPos.y][lastPos.x]; // 上一次点击的格子
         this.exchangeCell(lastPos, pos);
         var result1 = this.checkPoint(pos.x, pos.y)[0];
         var result2 = this.checkPoint(lastPos.x, lastPos.y)[0];
@@ -163,6 +163,17 @@ export default class GameModel {
             return [this.changeModels, this.effectsQueue];
         }
     }
+
+    hammerSelectCell(pos) {
+        this.changeModels = [];// 发生改变的model，将作为返回值，给view播动作
+        this.effectsQueue = []; // 动物消失，爆炸等特效
+
+        this.curTime = 0; // 动画播放的当前时间
+        this.pushToChangeModels(this.cells[pos.y][pos.x]);
+        this.hammerProcessCrush(pos);
+    
+        return [this.changeModels, this.effectsQueue];
+    }
     // 消除
     processCrush(checkPoint) {
         let cycleCount = 0;
@@ -174,7 +185,6 @@ export default class GameModel {
                 let model1 = this.cells[pos1.y][pos1.x];
                 let model2 = this.cells[pos2.y][pos2.x];
                 if (model1.status == CELL_STATUS.BIRD || model2.status == CELL_STATUS.BIRD) {
-                    let bombModel = null;
                     if (model1.status == CELL_STATUS.BIRD) {
                         model1.type = model2.type;
                         bombModels.push(model1);
@@ -211,6 +221,14 @@ export default class GameModel {
             checkPoint = this.down();
             cycleCount++;
         }
+    }
+
+    hammerProcessCrush(pos) {
+        let bombModels = [this.cells[pos.y][pos.x]]; //当前点击的格子;
+        this.crushCell(pos.x, pos.y, false, 0);
+        this.processBomb(bombModels, bombModels.length);
+        this.curTime += ANITIME.DIE;
+        this.processCrush(this.down());
     }
 
     //生成新cell
