@@ -41,7 +41,10 @@ cc.Class({
         this.itemsScrollview = this.itemsScrollview.getComponent("itemsScrollview");
     },
     setController: function(controller){
-        this.controller = controller;
+        this.gameModel = controller;
+    },
+    setGameModel(gameModel){
+        this.gameModel = gameModel;
     },
 
     initWithCellModels: function(cellsModels){
@@ -96,7 +99,7 @@ cc.Class({
                 var touchPos = eventTouch.getLocation();
                 var cellPos = this.convertTouchPosToCell(touchPos);
                 if(startCellPos.x != cellPos.x || startCellPos.y != cellPos.y){
-                    let cellView = this.controller.getCells()[startCellPos.y][startCellPos.x];
+                    let cellView = this.gameModel.getCells()[startCellPos.y][startCellPos.x];
                     if (cellView.getStatus() == CELL_STATUS.COMMON) {
                         this.itemsScrollview.isMagic =  false;
                         this.itemsScrollview.setMagic(this.itemsScrollview.getMagic()-1);
@@ -324,17 +327,23 @@ cc.Class({
 
             this.tips();
 
-            this.controller.cleanCmd();
+            this.gameModel.cleanCmd();
         }, this)));
     },
     // 正常击中格子后的操作
     selectCell: function(cellPos) {
         var result = [[], []];
         if (this.itemsScrollview.isHammer) {
-            result = this.controller.hammerSelectCell(cellPos);  
+            result = this.gameModel.hammerSelectCell(cellPos);  
+        }
+        else if (this.itemsScrollview.isLine) {
+            this.gameModel.rocketSelectCell(cellPos, CELL_STATUS.LINE);
+        }
+        else if (this.itemsScrollview.isColumn) {
+            this.gameModel.rocketSelectCell(cellPos, CELL_STATUS.COLUMN);
         }
         else {
-            result = this.controller.selectCell(cellPos); // 直接先丢给model处理数据逻辑
+            result = this.gameModel.selectCell(cellPos); // 直接先丢给model处理数据逻辑
         }
          
         var changeModels = result[0]; // 有改变的cell，包含新生成的cell和生成马上摧毁的格子
@@ -342,7 +351,7 @@ cc.Class({
         this.playEffect(effectsQueue);
         this.disableTouch(this.getPlayAniTime(changeModels), this.getStep(effectsQueue));
         this.updateView(changeModels);
-        this.controller.cleanCmd(); 
+        this.gameModel.cleanCmd(); 
         if(changeModels.length >= 2){
             this.updateSelect(cc.v2(-1,-1));
             this.audioUtils.playSwap();
@@ -356,18 +365,26 @@ cc.Class({
             this.itemsScrollview.isHammer = false;
             this.itemsScrollview.setHammer(this.itemsScrollview.getHammer()-1);
         }
+        else if (this.itemsScrollview.isLine) {
+            this.itemsScrollview.isLine = false;
+            this.itemsScrollview.setLine(this.itemsScrollview.getLine()-1);
+        }
+        else if (this.itemsScrollview.isColumn) {
+            this.itemsScrollview.isColumn= false;
+            this.itemsScrollview.setColumn(this.itemsScrollview.getColumn()-1);
+        }
     
         return changeModels;
     },
     changeSelectCell: function(cellPos) {
-        var result = this.controller.changeSelectCell(cellPos);
+        var result = this.gameModel.changeSelectCell(cellPos);
          
         var changeModels = result[0]; // 有改变的cell，包含新生成的cell和生成马上摧毁的格子
         var effectsQueue = result[1]; //各种特效
         this.playEffect(effectsQueue);
         this.disableTouch(this.getPlayAniTime(changeModels), this.getStep(effectsQueue));
         this.updateView(changeModels);
-        this.controller.cleanCmd(); 
+        this.gameModel.cleanCmd(); 
         if(changeModels.length >= 2){
             this.updateSelect(cc.v2(-1,-1));
             this.audioUtils.playSwap();

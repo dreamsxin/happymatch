@@ -189,6 +189,20 @@ export default class GameModel {
         this.processCrush(checkPoint);
         return [this.changeModels, this.effectsQueue];
     }
+    
+    rocketSelectCell(pos, status) {
+        this.changeModels = [];// 发生改变的model，将作为返回值，给view播动作
+        this.effectsQueue = []; // 动物消失，爆炸等特效
+
+        // this.curTime = 0; // 动画播放的当前时间
+        // this.pushToChangeModels(this.cells[pos.y][pos.x]);
+        
+        this.cells[pos.y][pos.x].status = status;
+        this.curTime = ANITIME.DIE;
+        this.processCrush(this.down());
+    
+        return [this.changeModels, this.effectsQueue];
+    }
 
     hammerSelectCell(pos) {
         this.changeModels = [];// 发生改变的model，将作为返回值，给view播动作

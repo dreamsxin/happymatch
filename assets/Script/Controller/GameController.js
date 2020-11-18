@@ -26,24 +26,9 @@ cc.Class({
         this.gameModel.init(4);
         var gridScript = this.grid.getComponent("GridView");
         gridScript.setController(this);
+        gridScript.setGameModel(this.gameModel);
         gridScript.initWithCellModels(this.gameModel.getCells());
-    },
-    selectCell: function(pos){
-        return this.gameModel.selectCell(pos);
-    },
-    getCells() {
-        return this.gameModel.getCells();
-    },
-    changeSelectCell(pos) {
-        return this.gameModel.changeSelectCell(pos);
-    },
-    hammerSelectCell(pos) {
-        return this.gameModel.hammerSelectCell(pos);
-    },
-    cleanCmd: function(){
-        this.gameModel.cleanCmd();
     }
-
 
     // called every frame, uncomment this function to activate update callback
     // update: function (dt) {
