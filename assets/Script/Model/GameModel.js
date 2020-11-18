@@ -164,6 +164,32 @@ export default class GameModel {
         }
     }
 
+    changeSelectCell(pos) {
+        this.changeModels = [];// 发生改变的model，将作为返回值，给view播动作
+        this.effectsQueue = []; // 动物消失，爆炸等特效
+        var lastPos = this.lastPos;
+        var delta = Math.abs(pos.x - lastPos.x) + Math.abs(pos.y - lastPos.y);
+        if (delta != 1) { //非相邻格子， 直接返回
+            this.lastPos = pos;
+            return [[], []];
+        }
+        let curClickCell = this.cells[pos.y][pos.x]; //当前点击的格子
+        let lastClickCell = this.cells[lastPos.y][lastPos.x]; // 上一次点击的格子
+        this.exchangeCell(lastPos, pos);
+        
+        this.curTime = 0; // 动画播放的当前时间
+        this.pushToChangeModels(curClickCell);
+        this.pushToChangeModels(lastClickCell);
+
+        this.lastPos = cc.v2(-1, -1);
+        curClickCell.moveTo(lastPos, this.curTime);
+        lastClickCell.moveTo(pos, this.curTime);
+        var checkPoint = [pos, lastPos];
+        this.curTime += ANITIME.TOUCH_MOVE;
+        this.processCrush(checkPoint);
+        return [this.changeModels, this.effectsQueue];
+    }
+
     hammerSelectCell(pos) {
         this.changeModels = [];// 发生改变的model，将作为返回值，给view播动作
         this.effectsQueue = []; // 动物消失，爆炸等特效

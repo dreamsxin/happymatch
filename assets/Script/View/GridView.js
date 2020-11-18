@@ -109,7 +109,7 @@ cc.Class({
                     }
                 }
             }
-            else if(this.isCanMove){
+            else if(this.isCanMove) {
                 this.stopTipsActions();
 
                 var startTouchPos = eventTouch.getStartLocation ();
@@ -118,7 +118,12 @@ cc.Class({
                 var cellPos = this.convertTouchPosToCell(touchPos);
                 if(startCellPos.x != cellPos.x || startCellPos.y != cellPos.y){
                     this.isCanMove = false;
-                    var changeModels = this.selectCell(cellPos); 
+                    if (this.itemsScrollview.isChange) {
+                        this.changeSelectCell(cellPos);
+                    }
+                    else {
+                        this.selectCell(cellPos);
+                    }
                 }
            }
         }, this);
@@ -324,7 +329,14 @@ cc.Class({
     },
     // 正常击中格子后的操作
     selectCell: function(cellPos) {
-        var result = this.itemsScrollview.isHammer ? this.controller.hammerSelectCell(cellPos) : this.controller.selectCell(cellPos); // 直接先丢给model处理数据逻辑
+        var result = [[], []];
+        if (this.itemsScrollview.isHammer) {
+            result = this.controller.hammerSelectCell(cellPos);  
+        }
+        else {
+            result = this.controller.selectCell(cellPos); // 直接先丢给model处理数据逻辑
+        }
+         
         var changeModels = result[0]; // 有改变的cell，包含新生成的cell和生成马上摧毁的格子
         var effectsQueue = result[1]; //各种特效
         this.playEffect(effectsQueue);
@@ -344,14 +356,33 @@ cc.Class({
             this.itemsScrollview.isHammer = false;
             this.itemsScrollview.setHammer(this.itemsScrollview.getHammer()-1);
         }
+    
+        return changeModels;
+    },
+    changeSelectCell: function(cellPos) {
+        var result = this.controller.changeSelectCell(cellPos);
+         
+        var changeModels = result[0]; // 有改变的cell，包含新生成的cell和生成马上摧毁的格子
+        var effectsQueue = result[1]; //各种特效
+        this.playEffect(effectsQueue);
+        this.disableTouch(this.getPlayAniTime(changeModels), this.getStep(effectsQueue));
+        this.updateView(changeModels);
+        this.controller.cleanCmd(); 
+        if(changeModels.length >= 2){
+            this.updateSelect(cc.v2(-1,-1));
+            this.audioUtils.playSwap();
+        }
+        else {
+            this.updateSelect(cellPos);
+            this.audioUtils.playClick();
+        }
+
+        this.itemsScrollview.isChange = false;
+        this.itemsScrollview.setChange(this.itemsScrollview.getChange()-1);
+
         return changeModels;
     },
     playEffect: function(effectsQueue){
         this.effectLayer.getComponent("EffectLayer").playEffects(effectsQueue);
     }
-
-    // called every frame, uncomment this function to activate update callback
-    // update: function (dt) {
-
-    // },
 });

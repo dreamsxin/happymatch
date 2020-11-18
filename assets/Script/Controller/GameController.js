@@ -34,6 +34,9 @@ cc.Class({
     getCells() {
         return this.gameModel.getCells();
     },
+    changeSelectCell(pos) {
+        return this.gameModel.changeSelectCell(pos);
+    },
     hammerSelectCell(pos) {
         return this.gameModel.hammerSelectCell(pos);
     },
