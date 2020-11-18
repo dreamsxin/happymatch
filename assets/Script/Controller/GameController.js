@@ -28,9 +28,11 @@ cc.Class({
         gridScript.setController(this);
         gridScript.initWithCellModels(this.gameModel.getCells());
     },
-
     selectCell: function(pos){
         return this.gameModel.selectCell(pos);
+    },
+    getCells() {
+        return this.gameModel.getCells();
     },
     hammerSelectCell(pos) {
         return this.gameModel.hammerSelectCell(pos);

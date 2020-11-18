@@ -1,4 +1,4 @@
-import {CELL_WIDTH, CELL_HEIGHT, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT, ANITIME, GRID_WIDTH, GRID_HEIGHT} from '../Model/ConstValue';
+import {CELL_WIDTH, CELL_HEIGHT, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT, ANITIME, GRID_WIDTH, GRID_HEIGHT, CELL_STATUS} from '../Model/ConstValue';
 
 import AudioUtils from "../Utils/AudioUtils";
 
@@ -64,7 +64,7 @@ cc.Class({
     },
     setListener: function(){
         this.node.on(cc.Node.EventType.TOUCH_START, function(eventTouch){
-            if(this.isInPlayAni){//播放动画中，不允许点击
+            if(this.isInPlayAni || this.itemsScrollview.isMagic){//播放动画中，不允许点击
                 return true;
             }
 
@@ -84,17 +84,42 @@ cc.Class({
         }, this);
         // 滑动操作逻辑
         this.node.on(cc.Node.EventType.TOUCH_MOVE, function(eventTouch){
-           if(this.isCanMove){
+            if(this.isInPlayAni){//播放动画中，不允许点击
+                return true;
+            }
+
+            if (this.itemsScrollview.isMagic) {
                 this.stopTipsActions();
 
-               var startTouchPos = eventTouch.getStartLocation ();
-               var startCellPos = this.convertTouchPosToCell(startTouchPos);
-               var touchPos = eventTouch.getLocation();
-               var cellPos = this.convertTouchPosToCell(touchPos);
-               if(startCellPos.x != cellPos.x || startCellPos.y != cellPos.y){
-                   this.isCanMove = false;
-                   var changeModels = this.selectCell(cellPos); 
-               }
+                var startTouchPos = eventTouch.getStartLocation ();
+                var startCellPos = this.convertTouchPosToCell(startTouchPos);
+                var touchPos = eventTouch.getLocation();
+                var cellPos = this.convertTouchPosToCell(touchPos);
+                if(startCellPos.x != cellPos.x || startCellPos.y != cellPos.y){
+                    let cellView = this.controller.getCells()[startCellPos.y][startCellPos.x];
+                    if (cellView.getStatus() == CELL_STATUS.COMMON) {
+                        this.itemsScrollview.isMagic =  false;
+                        this.itemsScrollview.setMagic(this.itemsScrollview.getMagic()-1);
+                        
+                        let status = startCellPos.x == cellPos.x ? CELL_STATUS.COLUMN : CELL_STATUS.LINE;
+                        cellView.setStatus(status);
+                        this.cellViews[startCellPos.y][startCellPos.x].getComponent(cc.Animation).play(status);
+
+                        this.disableTouch(0.2);
+                    }
+                }
+            }
+            else if(this.isCanMove){
+                this.stopTipsActions();
+
+                var startTouchPos = eventTouch.getStartLocation ();
+                var startCellPos = this.convertTouchPosToCell(startTouchPos);
+                var touchPos = eventTouch.getLocation();
+                var cellPos = this.convertTouchPosToCell(touchPos);
+                if(startCellPos.x != cellPos.x || startCellPos.y != cellPos.y){
+                    this.isCanMove = false;
+                    var changeModels = this.selectCell(cellPos); 
+                }
            }
         }, this);
         this.node.on(cc.Node.EventType.TOUCH_END, function(eventTouch){
@@ -288,7 +313,9 @@ cc.Class({
         this.isInPlayAni = true;
         this.node.runAction(cc.sequence(cc.delayTime(time),cc.callFunc(function(){
             this.isInPlayAni = false;
-            this.audioUtils.playContinuousMatch(step);
+            if (step) {
+                this.audioUtils.playContinuousMatch(step);
+            }
 
             this.tips();
 

@@ -30,10 +30,15 @@ cc.Class({
         this.columnLabel.string = window.INIT_GAME_SAVE_DATA.items_column;
         this.hammerLabel.string = window.INIT_GAME_SAVE_DATA.items_hammer;
         this.magicLabel.string = window.INIT_GAME_SAVE_DATA.items_magic;
+
+        this.itemsSwitch = [];
     },
     defineParams(event, name) {
+        let isSwitch = "is" + name;
         if (this["on" + name] == null) {
-            this["is" + name] = null;
+            this.itemsSwitch.push(isSwitch);
+
+            this[isSwitch] = null;
             this["set" + name] = function(value) {
                 this[name.toLowerCase() + "Label"].string = value;
             };
@@ -42,12 +47,19 @@ cc.Class({
             };
             this["on" + name] = function() {
                 if (this["get" + name]() > 0) {
-                    this["is" + name] = true;
+                    this[isSwitch] = true;
                 }
                 else {
                     cc.log("跳到道具购买界面");
                 }
             };
+        }
+         
+        for (const data of this.itemsSwitch) {
+            if (data == isSwitch) {
+                continue;
+            }
+            this[data] = false;
         }
 
         this["on" + name]();

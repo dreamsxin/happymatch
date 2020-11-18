@@ -36,6 +36,9 @@ export default class CellModel {
     setStatus(status) {
         this.status = status;
     }
+    getStatus() {
+        return this.status;
+    }
 
     moveToAndBack(pos) {
         var srcPos = cc.v2(this.x, this.y);
