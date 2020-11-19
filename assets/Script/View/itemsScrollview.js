@@ -53,6 +53,12 @@ cc.Class({
                 else {
                     cc.log("跳到道具购买界面");
                 }
+                
+                if (name == "Back") {
+                    this.gridView.onBack();
+                    this.setBack(this.getBack()-1);
+                    return;
+                }
             };
         }
          
@@ -65,6 +71,9 @@ cc.Class({
 
         this["on" + name]();
     },
+    setGridView(gridView) {
+        this.gridView = gridView;
+    }
     // setRefresh(value) {
     //     this.refreshLabel.string = value;
     // },

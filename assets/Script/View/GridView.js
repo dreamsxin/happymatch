@@ -39,6 +39,7 @@ cc.Class({
         this.isCanMove = true;
         this.isInPlayAni = false; // 是否在播放中
         this.itemsScrollview = this.itemsScrollview.getComponent("itemsScrollview");
+        this.itemsScrollview.setGridView(this);
     },
     setController: function(controller){
         this.gameModel = controller;
@@ -70,6 +71,9 @@ cc.Class({
             if(this.isInPlayAni || this.itemsScrollview.isMagic){//播放动画中，不允许点击
                 return true;
             }
+
+            this.gameModel.setCellsCopy();
+            this.cellViewsCopy = JSON.parse(JSON.stringify(this.cellViews));
 
             this.tips();
 
@@ -309,7 +313,9 @@ cc.Class({
         this.node.stopActionByTag(ANITIME.TIPS_ACTION_TAG);
         for(var i = 1;i <=GRID_WIDTH ;i++){
             for(var j = 1 ;j <=GRID_HEIGHT ;j ++){
-                this.cellViews[i][j].stopActionByTag(ANITIME.TIPS_ACTION_TAG);
+                // if(this.cellViews[i][j]) {
+                    this.cellViews[i][j].stopActionByTag(ANITIME.TIPS_ACTION_TAG);    
+                // }
             }
         }
     },
@@ -400,6 +406,22 @@ cc.Class({
         return changeModels;
     },
     playEffect: function(effectsQueue){
-        this.effectLayer.getComponent("EffectLayer").playEffects(effectsQueue);
+        this.effectLayer.getComsponent("EffectLayer").playEffects(effectsQueue);
+    },
+    onBack() {
+        let time = 0.5;
+        // for(var i = 1;i<=GRID_WIDTH;i++){
+        //     for(var j = 1;j<=GRID_HEIGHT;j++){
+        //         let model = this.gameModel.getCells[i][j];
+        //         if (model != this.gameCellsCopy[i][j]) {
+        //             model = this.gameCellsCopy[i][j];
+        //             model.moveTo(cc.v2(this.cellViewsCopy[i][j].x, this.cellViewsCopy[i][j].y), time);
+        //             this.gameModel.getCells[i][j] = model;
+        //             view.getComponent("CellView").updateView();
+        //         }
+        //     }
+        // }
+        this.disableTouch(time);
+        this.updateView(this.gameModel.selectBack());
     }
 });
