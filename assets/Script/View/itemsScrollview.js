@@ -40,10 +40,11 @@ cc.Class({
 
             this[isSwitch] = null;
             this["set" + name] = function(value) {
-                this[name.toLowerCase() + "Label"].string = value;
+                this[name.toLowerCase() + "Label"].string = value > 0 ?  value : '+';
             };
             this["get" + name] = function() {
-                return this[name.toLowerCase() + "Label"].string;
+                let str = this[name.toLowerCase() + "Label"].string;
+                return isNaN(str) ? 0 : Number(str);
             };
             this["on" + name] = function() {
                 if (this["get" + name]() > 0) {

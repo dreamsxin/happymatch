@@ -29,9 +29,4 @@ cc.Class({
         gridScript.setGameModel(this.gameModel);
         gridScript.initWithCellModels(this.gameModel.getCells());
     }
-
-    // called every frame, uncomment this function to activate update callback
-    // update: function (dt) {
-
-    // }, 
 });

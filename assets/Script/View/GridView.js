@@ -337,10 +337,10 @@ cc.Class({
             result = this.gameModel.hammerSelectCell(cellPos);  
         }
         else if (this.itemsScrollview.isLine) {
-            this.gameModel.rocketSelectCell(cellPos, CELL_STATUS.LINE);
+            result = this.gameModel.rocketSelectCell(cellPos, CELL_STATUS.LINE);
         }
         else if (this.itemsScrollview.isColumn) {
-            this.gameModel.rocketSelectCell(cellPos, CELL_STATUS.COLUMN);
+            result = this.gameModel.rocketSelectCell(cellPos, CELL_STATUS.COLUMN);
         }
         else {
             result = this.gameModel.selectCell(cellPos); // 直接先丢给model处理数据逻辑

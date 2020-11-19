@@ -190,15 +190,19 @@ export default class GameModel {
         return [this.changeModels, this.effectsQueue];
     }
     
-    rocketSelectCell(pos, status) {
+    rocketSelectCell(pos, status) {        
+        this.cells[pos.y][pos.x].status = status;
+
         this.changeModels = [];// 发生改变的model，将作为返回值，给view播动作
         this.effectsQueue = []; // 动物消失，爆炸等特效
 
-        // this.curTime = 0; // 动画播放的当前时间
-        // this.pushToChangeModels(this.cells[pos.y][pos.x]);
-        
-        this.cells[pos.y][pos.x].status = status;
-        this.curTime = ANITIME.DIE;
+        this.curTime = 0; // 动画播放的当前时间
+        this.pushToChangeModels(this.cells[pos.y][pos.x]);
+
+        let bombModels = [this.cells[pos.y][pos.x]]; //当前点击的格子;
+        this.crushCell(pos.x, pos.y, false, 0);
+        this.processBomb(bombModels, bombModels.length);
+        this.curTime += ANITIME.DIE;
         this.processCrush(this.down());
     
         return [this.changeModels, this.effectsQueue];
@@ -210,7 +214,12 @@ export default class GameModel {
 
         this.curTime = 0; // 动画播放的当前时间
         this.pushToChangeModels(this.cells[pos.y][pos.x]);
-        this.hammerProcessCrush(pos);
+        
+        let bombModels = [this.cells[pos.y][pos.x]]; //当前点击的格子;
+        this.crushCell(pos.x, pos.y, false, 0);
+        // this.processBomb(bombModels, bombModels.length);
+        this.curTime += ANITIME.DIE;
+        this.processCrush(this.down());
     
         return [this.changeModels, this.effectsQueue];
     }
@@ -261,14 +270,6 @@ export default class GameModel {
             checkPoint = this.down();
             cycleCount++;
         }
-    }
-
-    hammerProcessCrush(pos) {
-        let bombModels = [this.cells[pos.y][pos.x]]; //当前点击的格子;
-        this.crushCell(pos.x, pos.y, false, 0);
-        this.processBomb(bombModels, bombModels.length);
-        this.curTime += ANITIME.DIE;
-        this.processCrush(this.down());
     }
 
     //生成新cell
@@ -442,6 +443,7 @@ export default class GameModel {
             bombModels = newBombModel;
         }
     }
+
     /**
      * 
      * @param {开始播放的时间} playTime 
