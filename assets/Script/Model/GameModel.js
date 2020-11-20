@@ -280,6 +280,21 @@ export default class GameModel {
 
     //生成新cell
     createCell(pos, status, type) {
+        if (status == CELL_STATUS.BIRD) {
+            type = CELL_TYPE.BIRD;
+        }
+        let model = new CellModel();
+        model.init(type);
+        model.setStartXY(pos.x, pos.y);
+        model.setXY(pos.x, pos.y);
+        model.setStatus(status);
+        model.setVisible(0, false);
+        model.setVisible(this.curTime, true);
+        this.changeModels.push(model);
+        return model;
+    }
+
+    createNewCell(pos, status, type) {
         if (status == "") {
             return;
         }
@@ -294,14 +309,7 @@ export default class GameModel {
         model.setStatus(status);
         model.setVisible(0, false);
         model.setVisible(this.curTime, true);
-        return model;
-    }
-
-    createNewCell(pos, status, type) {
-        let model = this.createCell(pos, status, type);
-        if (model) {
-            this.changeModels.push();
-        }
+        this.changeModels.push(model);
     }
     // 下落
     down() {
@@ -506,27 +514,28 @@ export default class GameModel {
     }
 
     selectBack() {
-        let time = 0.5;
-        let bombModel = [];
-
-        this.curTime = 0;
         this.changeModels = [];// 发生改变的model，将作为返回值，给view播动作
         this.effectsQueue = []; // 动物消失，爆炸等特效
         for(var i = 1;i<=GRID_WIDTH;i++){
             for(var j = 1;j<=GRID_HEIGHT;j++){
                 let model = this.cells[i][j];
-                if (model != this.cellsCopy[i][j]) {
-                    // model = this.cellsCopy[i][j];
-                    // model.moveTo(cc.v2(this.cellViewsCopy[i][j].x, this.cellViewsCopy[i][j].y), time);
-                    // this.gameModel.getCells[i][j] = model;
-                    this.cells[i][j] = this.cellsCopy[i][j];
-                    this.crushCell(i, j, false, 0);
-                    bombModel.push(model);
+                let copy = this.cellsCopy[i][j];
+                let isModel = model.type == copy.type && model.status == copy.status;
+                if (!isModel) {
+                    this.curTime = ANITIME.DIE;
+                    this.crushCell(j, i, false, 0);
+
+                    this.curTime += ANITIME.SHOW;
+                    // this.cells[i][j] = this.createCell(cc.v2(j, i), copy.status, copy.type);//原地出现
+                    this.cells[i][j] = this.createCell(cc.v2(model.startX, model.startY), copy.status, copy.type);//从上面掉下来
+
+                    this.curTime += ANITIME.TOUCH_MOVE;
+                    this.cells[i][j].moveTo(cc.v2(copy.x, copy.y), this.curTime);
                 }
             }
         }
-        return bombModel;
-    }
 
+        return [this.changeModels, this.effectsQueue];
+    }
 }
 

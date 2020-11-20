@@ -47,17 +47,22 @@ cc.Class({
                 return isNaN(str) ? 0 : Number(str);
             };
             this["on" + name] = function() {
+                if(this.gridView.isInPlayAni){//播放动画中，不允许点击
+                    return false;
+                }
+
                 if (this["get" + name]() > 0) {
                     this[isSwitch] = true;
                 }
                 else {
                     cc.log("跳到道具购买界面");
                 }
-                
+
                 if (name == "Back") {
-                    this.gridView.onBack();
-                    this.setBack(this.getBack()-1);
-                    return;
+                    if (this.gridView.selectBack()){
+                        this.setBack(this.getBack()-1);
+                    }
+                    this[isSwitch] = false;
                 }
             };
         }

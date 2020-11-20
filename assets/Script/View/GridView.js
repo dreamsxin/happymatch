@@ -73,7 +73,7 @@ cc.Class({
             }
 
             this.gameModel.setCellsCopy();
-            this.cellViewsCopy = JSON.parse(JSON.stringify(this.cellViews));
+            // this.cellViewsCopy = cc.instantiate(this.cellViews);//JSON.parse(JSON.stringify(this.cellViews));
 
             this.tips();
 
@@ -406,22 +406,22 @@ cc.Class({
         return changeModels;
     },
     playEffect: function(effectsQueue){
-        this.effectLayer.getComsponent("EffectLayer").playEffects(effectsQueue);
+        this.effectLayer.getComponent("EffectLayer").playEffects(effectsQueue);
     },
-    onBack() {
-        let time = 0.5;
-        // for(var i = 1;i<=GRID_WIDTH;i++){
-        //     for(var j = 1;j<=GRID_HEIGHT;j++){
-        //         let model = this.gameModel.getCells[i][j];
-        //         if (model != this.gameCellsCopy[i][j]) {
-        //             model = this.gameCellsCopy[i][j];
-        //             model.moveTo(cc.v2(this.cellViewsCopy[i][j].x, this.cellViewsCopy[i][j].y), time);
-        //             this.gameModel.getCells[i][j] = model;
-        //             view.getComponent("CellView").updateView();
-        //         }
-        //     }
-        // }
-        this.disableTouch(time);
-        this.updateView(this.gameModel.selectBack());
+    selectBack() {
+        let result = this.gameModel.selectBack();
+        var changeModels = result[0]; // 有改变的cell，包含新生成的cell和生成马上摧毁的格子
+        if (changeModels.length <= 0) {
+            return false;
+        }
+
+        var effectsQueue = result[1]; //各种特效
+        this.playEffect(effectsQueue);
+        this.disableTouch(this.getPlayAniTime(changeModels), this.getStep(effectsQueue));
+        this.updateView(changeModels);
+        this.gameModel.cleanCmd();
+        this.updateSelect(cc.v2(-1,-1));
+
+        return true;
     }
 });

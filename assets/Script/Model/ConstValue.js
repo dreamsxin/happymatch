@@ -37,7 +37,8 @@ export const ANITIME = {
     BOMB_BIRD_DELAY: 0.7,
     DIE_SHAKE: 0.4, // 死前抖动
     TIPS:0.2,
-    TIPS_ACTION_TAG:10000
+    TIPS_ACTION_TAG:10000,
+    SHOW:0.2
 }
 
 window.GAME_SAVE_HANDLER = 'handler_data';
