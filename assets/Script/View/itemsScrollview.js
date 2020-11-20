@@ -35,7 +35,7 @@ cc.Class({
     },
     define(event, name) {
         let isSwitch = "is" + name;
-        if (this["on" + name] == null) {
+        if (this[isSwitch] == null) {
             this.itemsSwitch.push(isSwitch);
 
             this[isSwitch] = null;
@@ -54,10 +54,10 @@ cc.Class({
             }
             this[data] = false;
         }
-
-        this["on" + name]();
     },
     defineOnClick(event, name) {
+        this.define(event, name);
+
         if (this["on" + name] == null) {
             let isSwitch = "is" + name;
             this["on" + name] = function() {
@@ -78,10 +78,11 @@ cc.Class({
                 this[isSwitch] = false;
             };   
         }
-
-        this.define(event, name);
+        this["on" + name]();
     },
     defineOnOperate(event, name) {
+        this.define(event, name);
+
         if (this["on" + name] == null) {
             let isSwitch = "is" + name;
             this["on" + name] = function() {
@@ -97,8 +98,7 @@ cc.Class({
                 }
             };   
         }
-
-        this.define(event, name);
+        this["on" + name]();
     },
     setGridView(gridView) {
         this.gridView = gridView;

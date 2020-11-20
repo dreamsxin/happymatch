@@ -388,13 +388,13 @@ export default class GameModel {
             createTypeList.push(i);
         }
         for (let i = 0; i < createTypeList.length; i++) {
-            let index = Math.floor(Math.random() * (CELL_BASENUM - i)) + i;
+            let index = MATH_FLOOR(MATH_RONDOM() * (CELL_BASENUM - i)) + i;
             createTypeList[i], createTypeList[index] = createTypeList[index], createTypeList[i]
         }
     }
     // 随要生成一个类型
     getRandomCellType() {
-        var index = Math.floor(Math.random() * this.cellTypeNum);
+        var index = MATH_FLOOR(MATH_RONDOM() * this.cellTypeNum);
         return this.cellCreateType[index];
     }
     // TODO bombModels去重
@@ -542,12 +542,12 @@ export default class GameModel {
     }
 
     refreshSort(i, x, start) {
-        for(let j = start; j < CELL_HEIGHT; j++) {
-            let y = MATH_FLOOR(MATH_RONDOM() * (CELL_HEIGHT - j))+1;
+        for(let j = start; j <= GRID_HEIGHT; j++) {
+            let y = MATH_FLOOR(MATH_RONDOM() * (GRID_HEIGHT - j))+1;
             this.exchangeCell(cc.v2(i, j), cc.v2(x, y));
             if ((this.checkPoint(i, j)[0]).length > 0 || (this.checkPoint(x, y)[0]).length > 0) {
                 this.exchangeCell(cc.v2(i, j), cc.v2(x, y));
-                return this.refreshSort(i, x, j);
+                // return this.refreshSort(i, x, j);
             }
             // else {
             //     this.pushToChangeModels(this.cells[x][y]);
@@ -560,9 +560,9 @@ export default class GameModel {
         this.changeModels = [];
         this.effectsQueue = [];
 
-        for(let i = 0; i < CELL_WIDTH; i++) {
-            let x = MATH_FLOOR(MATH_RONDOM() * (CELL_WIDTH - i))+1;
-            this.refreshSort(i, x, 0);
+        for(let i = 1; i <= GRID_WIDTH; i++) {
+            let x = MATH_FLOOR(MATH_RONDOM() * (GRID_WIDTH - i))+1;
+            this.refreshSort(i, x, 1);
         }
 
         for(var i = 1;i<=GRID_WIDTH;i++){
@@ -572,7 +572,7 @@ export default class GameModel {
                 let isModel = model.type == copy.type && model.status == copy.status;
                 if (!isModel) {
                     this.curTime = ANITIME.TOUCH_MOVE;
-                    this.cells[i][j].moveTo(cc.v2(j, x), this.curTime);
+                    this.cells[i][j].moveTo(cc.v2(j, i), this.curTime);
                     this.pushToChangeModels(this.cells[i][j]);
                 }
             }
