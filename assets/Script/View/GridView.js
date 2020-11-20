@@ -423,5 +423,21 @@ cc.Class({
         this.updateSelect(cc.v2(-1,-1));
 
         return true;
+    },
+    selectRefresh() {
+        let result = this.gameModel.refresh();
+        var changeModels = result[0]; // 有改变的cell，包含新生成的cell和生成马上摧毁的格子
+        if (changeModels.length <= 0) {
+            return false;
+        }
+
+        var effectsQueue = result[1]; //各种特效
+        this.playEffect(effectsQueue);
+        this.disableTouch(this.getPlayAniTime(changeModels), this.getStep(effectsQueue));
+        this.updateView(changeModels);
+        this.gameModel.cleanCmd();
+        this.updateSelect(cc.v2(-1,-1));
+
+        return true;
     }
 });

@@ -33,7 +33,7 @@ cc.Class({
 
         this.itemsSwitch = [];
     },
-    defineParams(event, name) {
+    define(event, name) {
         let isSwitch = "is" + name;
         if (this["on" + name] == null) {
             this.itemsSwitch.push(isSwitch);
@@ -46,6 +46,20 @@ cc.Class({
                 let str = this[name.toLowerCase() + "Label"].string;
                 return isNaN(str) ? 0 : Number(str);
             };
+        }
+         
+        for (const data of this.itemsSwitch) {
+            if (data == isSwitch) {
+                continue;
+            }
+            this[data] = false;
+        }
+
+        this["on" + name]();
+    },
+    defineOnClick(event, name) {
+        if (this["on" + name] == null) {
+            let isSwitch = "is" + name;
             this["on" + name] = function() {
                 if(this.gridView.isInPlayAni){//播放动画中，不允许点击
                     return false;
@@ -58,23 +72,33 @@ cc.Class({
                     cc.log("跳到道具购买界面");
                 }
 
-                if (name == "Back") {
-                    if (this.gridView.selectBack()){
-                        this.setBack(this.getBack()-1);
-                    }
-                    this[isSwitch] = false;
+                if (this.gridView["select" + name]()){
+                    this["set"+name](this["get"+name]()-1);
                 }
-            };
-        }
-         
-        for (const data of this.itemsSwitch) {
-            if (data == isSwitch) {
-                continue;
-            }
-            this[data] = false;
+                this[isSwitch] = false;
+            };   
         }
 
-        this["on" + name]();
+        this.define(event, name);
+    },
+    defineOnOperate(event, name) {
+        if (this["on" + name] == null) {
+            let isSwitch = "is" + name;
+            this["on" + name] = function() {
+                if(this.gridView.isInPlayAni){//播放动画中，不允许点击
+                    return false;
+                }
+
+                if (this["get" + name]() > 0) {
+                    this[isSwitch] = true;
+                }
+                else {
+                    cc.log("跳到道具购买界面");
+                }
+            };   
+        }
+
+        this.define(event, name);
     },
     setGridView(gridView) {
         this.gridView = gridView;

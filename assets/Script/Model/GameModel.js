@@ -1,5 +1,8 @@
 import CellModel from "./CellModel";
-import { CELL_TYPE, CELL_BASENUM, CELL_STATUS, GRID_WIDTH, GRID_HEIGHT, ANITIME } from "./ConstValue";
+import { CELL_TYPE, CELL_BASENUM, CELL_STATUS, GRID_WIDTH, GRID_HEIGHT, ANITIME, CELL_HEIGHT } from "./ConstValue";
+
+const MATH_FLOOR = Math.floor;
+const MATH_RONDOM = Math.random;
 
 export default class GameModel {
     constructor() {
@@ -535,6 +538,46 @@ export default class GameModel {
             }
         }
 
+        return [this.changeModels, this.effectsQueue];
+    }
+
+    refreshSort(i, x, start) {
+        for(let j = start; j < CELL_HEIGHT; j++) {
+            let y = MATH_FLOOR(MATH_RONDOM() * (CELL_HEIGHT - j))+1;
+            this.exchangeCell(cc.v2(i, j), cc.v2(x, y));
+            if ((this.checkPoint(i, j)[0]).length > 0 || (this.checkPoint(x, y)[0]).length > 0) {
+                this.exchangeCell(cc.v2(i, j), cc.v2(x, y));
+                return this.refreshSort(i, x, j);
+            }
+            // else {
+            //     this.pushToChangeModels(this.cells[x][y]);
+            //     this.pushToChangeModels(this.cells[i][j]);
+            // }
+        }
+    }
+
+    refresh() {
+        this.changeModels = [];
+        this.effectsQueue = [];
+
+        for(let i = 0; i < CELL_WIDTH; i++) {
+            let x = MATH_FLOOR(MATH_RONDOM() * (CELL_WIDTH - i))+1;
+            this.refreshSort(i, x, 0);
+        }
+
+        for(var i = 1;i<=GRID_WIDTH;i++){
+            for(var j = 1;j<=GRID_HEIGHT;j++){
+                let model = this.cells[i][j];
+                let copy = this.cellsCopy[i][j];
+                let isModel = model.type == copy.type && model.status == copy.status;
+                if (!isModel) {
+                    this.curTime = ANITIME.TOUCH_MOVE;
+                    this.cells[i][j].moveTo(cc.v2(j, x), this.curTime);
+                    this.pushToChangeModels(this.cells[i][j]);
+                }
+            }
+        }
+        
         return [this.changeModels, this.effectsQueue];
     }
 }
