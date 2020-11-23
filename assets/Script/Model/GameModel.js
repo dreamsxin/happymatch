@@ -544,40 +544,38 @@ export default class GameModel {
     refreshSort(i, x, start) {
         for(let j = start; j <= GRID_HEIGHT; j++) {
             let y = MATH_FLOOR(MATH_RONDOM() * (GRID_HEIGHT - j))+1;
-            this.exchangeCell(cc.v2(i, j), cc.v2(x, y));
+
+            let lastPos = cc.v2(i, j);
+            let pos = cc.v2(x, y);
+
+            let curClickCell = this.cells[pos.y][pos.x];
+            let lastClickCell = this.cells[lastPos.y][lastPos.x];
+
+            this.exchangeCell(lastPos, pos);
             if ((this.checkPoint(i, j)[0]).length > 0 || (this.checkPoint(x, y)[0]).length > 0) {
-                this.exchangeCell(cc.v2(i, j), cc.v2(x, y));
+                this.exchangeCell(lastPos, pos);
                 // return this.refreshSort(i, x, j);
             }
-            // else {
-            //     this.pushToChangeModels(this.cells[x][y]);
-            //     this.pushToChangeModels(this.cells[i][j]);
-            // }
+            else {
+                this.pushToChangeModels(curClickCell);
+                this.pushToChangeModels(lastClickCell);
+
+                curClickCell.moveTo(lastPos, this.curTime);
+                lastClickCell.moveTo(pos, this.curTime);
+            }
         }
     }
 
     refresh() {
         this.changeModels = [];
         this.effectsQueue = [];
+        this.curTime = ANITIME.TOUCH_MOVE;
 
         for(let i = 1; i <= GRID_WIDTH; i++) {
             let x = MATH_FLOOR(MATH_RONDOM() * (GRID_WIDTH - i))+1;
             this.refreshSort(i, x, 1);
         }
 
-        for(var i = 1;i<=GRID_WIDTH;i++){
-            for(var j = 1;j<=GRID_HEIGHT;j++){
-                let model = this.cells[i][j];
-                let copy = this.cellsCopy[i][j];
-                let isModel = model.type == copy.type && model.status == copy.status;
-                if (!isModel) {
-                    this.curTime = ANITIME.TOUCH_MOVE;
-                    this.cells[i][j].moveTo(cc.v2(j, i), this.curTime);
-                    this.pushToChangeModels(this.cells[i][j]);
-                }
-            }
-        }
-        
         return [this.changeModels, this.effectsQueue];
     }
 }
