@@ -67,15 +67,15 @@ cc.Class({
 
                 if (this["get" + name]() > 0) {
                     this[isSwitch] = true;
+
+                    if (this.gridView["select" + name]()){
+                        this["set"+name](this["get"+name]()-1);
+                        this[isSwitch] = false;
+                    }
                 }
                 else {
                     cc.log("跳到道具购买界面");
                 }
-
-                if (this.gridView["select" + name]()){
-                    this["set"+name](this["get"+name]()-1);
-                }
-                this[isSwitch] = false;
             };   
         }
         this["on" + name]();
