@@ -36,7 +36,7 @@ export const ANITIME = {
     BOMB_DELAY: 0.3,
     BOMB_BIRD_DELAY: 0.7,
     DIE_SHAKE: 0.4, // 死前抖动
-    TIPS:0.2,
+    TIPS:0.4,
     TIPS_ACTION_TAG:10000,
     SHOW:0.2
 }
@@ -47,12 +47,12 @@ window.INIT_GAME_SAVE_DATA = {
     gold_num: 0,
     top_level: 0,
     login_time: "",
-    items_refresh: 10,
-    items_back: 11,
-    items_change: 12, 
-    items_line: 13,
-    items_column: 14,
-    items_hammer: 15,
-    items_magic: 16
+    items_refresh: 3,
+    items_back: 5,
+    items_change: 2, 
+    items_line: 2,
+    items_column: 2,
+    items_hammer: 3,
+    items_magic: 1
 };
 

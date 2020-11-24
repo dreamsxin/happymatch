@@ -50,7 +50,7 @@ export default class GameModel {
         let checkWithDirection = function (x, y, direction) {
             let queue = [];
             let vis = [];
-            vis[x + y * 9] = true;
+            vis[x + y * GRID_WIDTH] = true;
             queue.push(cc.v2(x, y));
             let front = 0;
             while (front < queue.length) {
@@ -64,8 +64,8 @@ export default class GameModel {
                 for (let i = 0; i < direction.length; i++) {
                     let tmpX = point.x + direction[i].x;
                     let tmpY = point.y + direction[i].y;
-                    if (tmpX < 1 || tmpX > 9
-                        || tmpY < 1 || tmpY > 9
+                    if (tmpX < 1 || tmpX > GRID_HEIGHT
+                        || tmpY < 1 || tmpY > GRID_WIDTH
                         || vis[tmpX + tmpY * 9]
                         || !this.cells[tmpY][tmpX]) {
                         continue;
@@ -576,6 +576,235 @@ export default class GameModel {
             this.refreshSort(i, x, 1);
         }
 
+        return [this.changeModels, this.effectsQueue];
+    }
+    
+    //this.cells[second][j],this.cells[third][j], cc.v2(third, j), ['x', 'y'], 
+    tipsHelp(secondCell, thirdCell, pos, dir) {
+        // let second = i+1;
+        // let third = i+2;
+        if (secondCell != null && thirdCell != null) {
+            let direction = [];
+            if (dir.first == 'x') {
+                if (this.cells[i][second].type == views.type) {
+                    direction = [cc.v2(0, 1), cc.v2(0, -1), cc.v2(1, 0)];
+                }
+                else if (this.cells[i][third].type == views.type) {
+                    direction = [cc.v2(0, 1), cc.v2(0, -1)];
+                }
+            }
+            else {
+                if (secondCell.type == views.type) {
+                    direction = [cc.v2(-1, 0), cc.v2(1, 0), cc.v2(0, 1)];
+                }
+                else if (thirdCell.type == views.type) {
+                    direction = [cc.v2(-1, 0), cc.v2(1, 0)];
+                }
+            }
+        
+            // let pos = cc.v2(third, j);
+            for (const dir of direction) {
+                let lastPos = cc.v2(dir.x+pos.x, dir.y+pos.y);
+                this.exchangeCell(lastPos, pos);
+                var [result, newCellStatus, newCellType] = this.checkPoint(pos.x, pos.y);
+                this.exchangeCell(lastPos, pos); 
+                if (result.length < 3) {
+                    continue;
+                }
+                for (var k in result) {
+                    if (pos.x == result[k].x && pos.y == result[k].y) {
+                        continue;
+                    }
+                    if (lastPos[dir.first] == pos[dir.first]){
+                        if (result[k][dir.second] > pos[dir.second]) {
+                            //down
+                        }
+                        else if (result[k][dir.second] < pos[dir.second]) {
+                            //up
+                        }
+                    }
+                    else if (lastPos[dir.first] < pos[dir.first]) {
+                        //result left
+                        //last right
+                    }
+                    else if(lastPos[dir.first] > pos[dir.first]) {
+                        //result right
+                        //last left
+                    }
+                }
+                
+                if (result.length >= 3) {
+                    return;
+                }
+            }
+        }
+    }
+
+    tips() {
+        this.changeModels = [];
+        this.effectsQueue = [];
+        this.curTime = ANITIME.TIPS;
+        let isSave = false;
+
+        for (let i = 1; i <= GRID_WIDTH; i++) {
+            for (let j = 1; j <= GRID_HEIGHT; j++) {
+                let views = this.cells[i][j];
+                let second = j+1;
+                let third = j+2;
+                isSave = false;
+                if (this.cells[i][second] != null && this.cells[i][third] != null) {
+                    let direction = [];
+                    if (this.cells[i][second].type == views.type) {
+                        direction = [cc.v2(0, 1), cc.v2(0, -1), cc.v2(1, 0)];
+                    }
+                    else if (this.cells[i][third].type == views.type) {
+                        direction = [cc.v2(0, 1), cc.v2(0, -1)];
+                    }
+                
+                    let pos = cc.v2(i, third);
+                    for (const dir of direction) {
+                        let lastPos = cc.v2(dir.x+pos.x, dir.y+pos.y);
+                        if (lastPos.x < 1 || lastPos.x > GRID_HEIGHT
+                        || lastPos.y < 1 || lastPos.y > GRID_WIDTH
+                        || !this.cells[lastPos.y][lastPos.x]) {
+                            continue;
+                        }
+
+                        this.exchangeCell(lastPos, pos);
+                        let [result, newCellStatus, newCellType] = this.checkPoint(pos.x, pos.y);
+                        this.exchangeCell(lastPos, pos); 
+                        if (result.length < 3) {
+                            continue;
+                        }
+                        for (var k in result) {
+                            if (pos.x == result[k].x && pos.y == result[k].y) {
+                                continue;
+                            }
+                            if (lastPos.x == pos.x){
+                                if (result[k].y > pos.y) {
+                                    this.cells[result[k].y][result[k].x].toTipsDown(ANITIME.TIPS);
+                                    if (!isSave) {
+                                        this.cells[lastPos.y][lastPos.x].toTipsUp(ANITIME.TIPS);
+                                        this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
+                                        isSave = true;
+                                    }
+                                }
+                                else if (result[k].y < pos.y) {
+                                    this.cells[result[k].y][result[k].x].toTipsUp(ANITIME.TIPS);
+                                    if (!isSave) {
+                                        this.cells[lastPos.y][lastPos.x].toTipsDown(ANITIME.TIPS);
+                                        this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
+                                        isSave = true;
+                                    }
+                                }
+                            }
+                            else if (lastPos.x < pos.x) {
+                                this.cells[result[k].y][result[k].x].toTipsRight(ANITIME.TIPS);
+                                if (!isSave) {
+                                    this.cells[lastPos.y][lastPos.x].toTipsLeft(ANITIME.TIPS);
+                                    this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
+                                    isSave = true;
+                                }
+                            }
+                            else if(lastPos.x > pos.x) {
+                                //result up
+                                this.cells[result[k].y][result[k].x].toTipsLeft(ANITIME.TIPS);
+                                //last down
+                                if (!isSave) {
+                                    this.cells[lastPos.y][lastPos.x].toTipsRight(ANITIME.TIPS);
+                                    this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
+                                    isSave = true;
+                                }
+                            }
+                            
+                            this.pushToChangeModels(this.cells[result[k].y][result[k].x]);
+                        }
+                        
+                        if (result.length >= 3) {
+                            return [this.changeModels, this.effectsQueue];
+                        }
+                    }
+                }
+
+                second = i+1;
+                third = i+2;
+                isSave = false;
+                if (this.cells[second] != null && this.cells[third] != null) {
+                    let direction = [];
+                    if (this.cells[second][j].type == views.type) {
+                        direction = [cc.v2(-1, 0), cc.v2(1, 0), cc.v2(0, 1)];
+                    }
+                    else if (this.cells[third][j].type == views.type) {
+                        direction = [cc.v2(-1, 0), cc.v2(1, 0)];
+                    }
+                
+                    let pos = cc.v2(third, j);
+                    for (const dir of direction) {
+                        let lastPos = cc.v2(dir.x+pos.x, dir.y+pos.y);
+                        if (lastPos.x < 1 || lastPos.x > GRID_HEIGHT
+                        || lastPos.y < 1 || lastPos.y > GRID_WIDTH
+                        || !this.cells[lastPos.y][lastPos.x]) {
+                            continue;
+                        }
+
+                        this.exchangeCell(lastPos, pos);
+                        var [result, newCellStatus, newCellType] = this.checkPoint(pos.x, pos.y);
+                        this.exchangeCell(lastPos, pos); 
+                        if (result.length < 3) {
+                            continue;
+                        }
+
+                        for (var k in result) {
+                            if (pos.x == result[k].x && pos.y == result[k].y) {
+                                continue;
+                            }
+                            if (lastPos.y == pos.y){
+                                if (result[k].x > pos.x) {
+                                    this.cells[result[k].y][result[k].x].toTipsLeft(ANITIME.TIPS);
+                                    if (!isSave) {
+                                        this.cells[lastPos.y][lastPos.x].toTipsRight(ANITIME.TIPS);
+                                        this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
+                                        isSave = true;
+                                    }
+                                }
+                                else if (result[k].x < pos.x) {
+                                    this.cells[result[k].y][result[k].x].toTipsRight(ANITIME.TIPS);
+                                    if (!isSave) {
+                                        this.cells[lastPos.y][lastPos.x].toTipsLeft(ANITIME.TIPS);
+                                        this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
+                                        isSave = true;
+                                    }
+                                }
+                            }
+                            else if (lastPos.y < pos.y) {
+                                //result left
+                                this.cells[result[k].y][result[k].x].toTipsUp(ANITIME.TIPS);
+                                //last right
+                                if (!isSave) {
+                                    this.cells[lastPos.y][lastPos.x].toTipsDown(ANITIME.TIPS);
+                                    this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
+                                    isSave = true;
+                                }
+                            }
+                            else if(lastPos.y > pos.y) {
+                                this.cells[result[k].y][result[k].x].toTipsDown(ANITIME.TIPS);
+                                if (!isSave) {
+                                    this.cells[lastPos.y][lastPos.x].toTipsUp(ANITIME.TIPS);
+                                    this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
+                                    isSave = true;
+                                }
+                            }
+                            this.pushToChangeModels(this.cells[result[k].y][result[k].x]);
+                        }
+                        
+                        if (result.length >= 3) {
+                            return [this.changeModels, this.effectsQueue];
+                        }
+                    }
+                }
+            }
+        }
+        
         return [this.changeModels, this.effectsQueue];
     }
 }

@@ -88,6 +88,18 @@ cc.Class({
                 let rotateLeft = cc.rotateBy(0.12, -60);
                 actionArray.push(cc.repeat(cc.sequence(rotateRight, rotateLeft, rotateRight), 2));
             }
+            else if (cmd[i].action == "toTipsLeft") {
+                this.toTipsLeft(cmd[i].playTime);
+            }
+            else if (cmd[i].action == "toTipsRight") {
+                this.toTipsRight(cmd[i].playTime);
+            }
+            else if (cmd[i].action == "toTipsUp") {
+                this.toTipsUp(cmd[i].playTime);
+            }
+            else if (cmd[i].action == "toTipsDown") {
+                this.toTipsDown(cmd[i].playTime);
+            }
 
             curTime = cmd[i].playTime + cmd[i].keepTime;
         }
@@ -124,23 +136,27 @@ cc.Class({
     },
 
     toTipsLeft(playTime) {
-        var move = cc.moveTo(playTime, cc.v2(this.node.x-0.025*CELL_WIDTH, this.node.y));
+        var move = cc.moveTo(playTime, cc.v2(this.node.x-0.05*CELL_WIDTH, this.node.y));
         var repeat = cc.moveTo(0, cc.v2(this.node.x, this.node.y));
-        this.node.runAction(cc.repeatForever(cc.sequence(move, repeat))).setTag(ANITIME.TIPS_ACTION_TAG);
+        let sequence = cc.sequence(cc.repeat(cc.sequence(move, repeat), 2), cc.delayTime(2));
+        this.node.runAction(cc.repeatForever(sequence)).setTag(ANITIME.TIPS_ACTION_TAG);
     },
     toTipsRight(playTime) {
-        var move = cc.moveTo(playTime, cc.v2(this.node.x+0.025*CELL_WIDTH, this.node.y));
+        var move = cc.moveTo(playTime, cc.v2(this.node.x+0.05*CELL_WIDTH, this.node.y));
         var repeat = cc.moveTo(0, cc.v2(this.node.x, this.node.y));
-        this.node.runAction(cc.repeatForever(cc.sequence(move, repeat))).setTag(ANITIME.TIPS_ACTION_TAG);
+        let sequence = cc.sequence(cc.repeat(cc.sequence(move, repeat), 2), cc.delayTime(2));
+        this.node.runAction(cc.repeatForever(sequence)).setTag(ANITIME.TIPS_ACTION_TAG);
     },
     toTipsUp(playTime) {
-        var move = cc.moveTo(playTime, cc.v2(this.node.x, this.node.y+0.025*CELL_HEIGHT));
+        var move = cc.moveTo(playTime, cc.v2(this.node.x, this.node.y+0.05*CELL_HEIGHT));
         var repeat = cc.moveTo(0, cc.v2(this.node.x, this.node.y));
-        this.node.runAction(cc.repeatForever(cc.sequence(move, repeat))).setTag(ANITIME.TIPS_ACTION_TAG);
+        let sequence = cc.sequence(cc.repeat(cc.sequence(move, repeat), 2), cc.delayTime(2));
+        this.node.runAction(cc.repeatForever(sequence)).setTag(ANITIME.TIPS_ACTION_TAG);
     },
     toTipsDown(playTime) {
-        var move = cc.moveTo(playTime, cc.v2(this.node.x, this.node.y-0.025*CELL_HEIGHT));
+        var move = cc.moveTo(playTime, cc.v2(this.node.x, this.node.y-0.05*CELL_HEIGHT));
         var repeat = cc.moveTo(0, cc.v2(this.node.x, this.node.y));
-        this.node.runAction(cc.repeatForever(cc.sequence(move, repeat))).setTag(ANITIME.TIPS_ACTION_TAG);
+        let sequence = cc.sequence(cc.repeat(cc.sequence(move, repeat), 2), cc.delayTime(2));
+        this.node.runAction(cc.repeatForever(sequence)).setTag(ANITIME.TIPS_ACTION_TAG);
     }
 });

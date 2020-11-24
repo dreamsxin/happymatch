@@ -85,34 +85,34 @@ export default class CellModel {
         });
     }
 
-    // toTipsLeft(playTime) {
-    //     this.cmd.push({
-    //         action: "toTipsLeft",
-    //         playTime: playTime,
-    //         keepTime: ANITIME.TIPS
-    //     });
-    // }
-    // toTipsRight(playTime) {
-    //     this.cmd.push({
-    //         action: "toTipsRight",
-    //         playTime: playTime,
-    //         keepTime: ANITIME.TIPS
-    //     });
-    // }
-    // toTipsUp(playTime) {
-    //     this.cmd.push({
-    //         action: "toTipsUp",
-    //         playTime: playTime,
-    //         keepTime: ANITIME.TIPS
-    //     });
-    // }
-    // toTipsDown(playTime) {
-    //     this.cmd.push({
-    //         action: "toTipsDown",
-    //         playTime: playTime,
-    //         keepTime: ANITIME.TIPS
-    //     });
-    // }
+    toTipsLeft(playTime) {
+        this.cmd.push({
+            action: "toTipsLeft",
+            playTime: playTime,
+            keepTime: ANITIME.TIPS
+        });
+    }
+    toTipsRight(playTime) {
+        this.cmd.push({
+            action: "toTipsRight",
+            playTime: playTime,
+            keepTime: ANITIME.TIPS
+        });
+    }
+    toTipsUp(playTime) {
+        this.cmd.push({
+            action: "toTipsUp",
+            playTime: playTime,
+            keepTime: ANITIME.TIPS
+        });
+    }
+    toTipsDown(playTime) {
+        this.cmd.push({
+            action: "toTipsDown",
+            playTime: playTime,
+            keepTime: ANITIME.TIPS
+        });
+    }
 
     setVisible(playTime, isVisible) {
         this.cmd.push({

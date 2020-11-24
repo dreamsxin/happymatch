@@ -244,70 +244,75 @@ cc.Class({
     },
     tips() {
         this.stopTipsActions();
-        
-        this.node.runAction(cc.sequence(cc.delayTime(5),cc.callFunc(function(){
-            let cellViews = [];
-            for (let i=1;i<=GRID_WIDTH; i++) {
-                for (let j=1;j<=GRID_HEIGHT; j++) {
-                    let views = this.cellViews[i][j];
-                    if (this.cellViews[i+1] != null && this.cellViews[i+2] != null) {
-                        if (this.cellViews[i+1][j].type == views.type) {
-                            cellViews[(i+2).toString()+j] = {view:this.cellViews[i+2][j],x:i+2,y:j,type:views.type,isY:true,isXIndex:true};
-                        }
-                        else if (this.cellViews[i+2][j].type == views.type) {
-                            cellViews[(i+1).toString()+j] = {view:this.cellViews[i+1][j],x:i+1, y:j,type:views.type,isY:true};
-                        }
-                    }
 
-                    if (this.cellViews[i][j+1] != null && this.cellViews[i][j+2] != null) {
-                        if (this.cellViews[i][j+1].type == views.type) {
-                            cellViews[i.toString()+(j+2)] = {view:this.cellViews[i][j+2],x:i,y:j+2,type:views.type,isX:true,isYIndex:true};
-                        }
-                        else if (this.cellViews[i][j+2].type == views.type) {
-                            cellViews[i.toString()+(j+1)] = {view:this.cellViews[i][j+1],x:i,y:j+1,type:views.type,isX:true};
-                        }
-                    }
-                }
-            }
-            
-            for (let key in cellViews) {
-                let view = cellViews[key];
-                if (view.isX) {
-                    if (this.cellViews[view.x-1] && this.cellViews[view.x-1][view.y].type == view.type) {
-                        view.view.getComponent("CellView").toTipsUp(ANITIME.TIPS);
-                        this.cellViews[view.x-1][view.y].getComponent("CellView").toTipsDown(ANITIME.TIPS);
-                        break;
-                    }
-                    else if (this.cellViews[view.x+1] && this.cellViews[view.x+1][view.y].type == view.type) {
-                        view.view.getComponent("CellView").toTipsDown(ANITIME.TIPS);
-                        this.cellViews[view.x+1][view.y].getComponent("CellView").toTipsUp(ANITIME.TIPS);
-                        break;
-                    }
-                    else if (view.isYIndex && this.cellViews[view.x][view.y+1] && this.cellViews[view.x][view.y+1].type == view.type) {
-                        view.view.getComponent("CellView").toTipsRight(ANITIME.TIPS);
-                        this.cellViews[view.x][view.y+1].getComponent("CellView").toTipsDown(ANITIME.TIPS);
-                        break;
-                    }
-                }
-                else if (view.isY) {
-                    if (this.cellViews[view.x][view.y-1] && this.cellViews[view.x][view.y-1].type == view.type) {
-                        view.view.getComponent("CellView").toTipsLeft(ANITIME.TIPS);
-                        this.cellViews[view.x][view.y-1].getComponent("CellView").toTipsRight(ANITIME.TIPS);
-                        break;
-                    }
-                    else if (this.cellViews[view.x][view.y+1] && this.cellViews[view.x][view.y+1].type == view.type) {
-                        view.view.getComponent("CellView").toTipsRight(ANITIME.TIPS);
-                        this.cellViews[view.x][view.y+1].getComponent("CellView").toTipsDown(ANITIME.TIPS);
-                        break;
-                    }
-                    else if (view.isXIndex && this.cellViews[view.x+1] && this.cellViews[view.x+1][view.y].type == view.type) {
-                        view.view.getComponent("CellView").toTipsDown(ANITIME.TIPS);
-                        this.cellViews[view.x+1][view.y].getComponent("CellView").toTipsUp(ANITIME.TIPS);
-                        break;
-                    }
-                }
-            }
+        this.node.runAction(cc.sequence(cc.delayTime(5),cc.callFunc(function(){
+            var result = this.gameModel.tips();
+            this.updateView(result[0]);
+            this.gameModel.cleanCmd();
         }, this))).setTag(ANITIME.TIPS_ACTION_TAG);
+
+        //     let cellViews = [];
+        //     for (let i=1;i<=GRID_WIDTH; i++) {
+        //         for (let j=1;j<=GRID_HEIGHT; j++) {
+        //             let views = this.cellViews[i][j];
+        //             if (this.cellViews[i+1] != null && this.cellViews[i+2] != null) {
+        //                 if (this.cellViews[i+1][j].type == views.type) {
+        //                     cellViews[(i+2).toString()+j] = {view:this.cellViews[i+2][j],x:i+2,y:j,type:views.type,isY:true,isXIndex:true};
+        //                 }
+        //                 else if (this.cellViews[i+2][j].type == views.type) {
+        //                     cellViews[(i+1).toString()+j] = {view:this.cellViews[i+1][j],x:i+1, y:j,type:views.type,isY:true};
+        //                 }
+        //             }
+
+        //             if (this.cellViews[i][j+1] != null && this.cellViews[i][j+2] != null) {
+        //                 if (this.cellViews[i][j+1].type == views.type) {
+        //                     cellViews[i.toString()+(j+2)] = {view:this.cellViews[i][j+2],x:i,y:j+2,type:views.type,isX:true,isYIndex:true};
+        //                 }
+        //                 else if (this.cellViews[i][j+2].type == views.type) {
+        //                     cellViews[i.toString()+(j+1)] = {view:this.cellViews[i][j+1],x:i,y:j+1,type:views.type,isX:true};
+        //                 }
+        //             }
+        //         }
+        //     }
+            
+        //     for (let key in cellViews) {
+        //         let view = cellViews[key];
+        //         if (view.isX) {
+        //             if (this.cellViews[view.x-1] && this.cellViews[view.x-1][view.y].type == view.type) {
+        //                 view.view.getComponent("CellView").toTipsUp(ANITIME.TIPS);
+        //                 this.cellViews[view.x-1][view.y].getComponent("CellView").toTipsDown(ANITIME.TIPS);
+        //                 break;
+        //             }
+        //             else if (this.cellViews[view.x+1] && this.cellViews[view.x+1][view.y].type == view.type) {
+        //                 view.view.getComponent("CellView").toTipsDown(ANITIME.TIPS);
+        //                 this.cellViews[view.x+1][view.y].getComponent("CellView").toTipsUp(ANITIME.TIPS);
+        //                 break;
+        //             }
+        //             else if (view.isYIndex && this.cellViews[view.x][view.y+1] && this.cellViews[view.x][view.y+1].type == view.type) {
+        //                 view.view.getComponent("CellView").toTipsRight(ANITIME.TIPS);
+        //                 this.cellViews[view.x][view.y+1].getComponent("CellView").toTipsDown(ANITIME.TIPS);
+        //                 break;
+        //             }
+        //         }
+        //         else if (view.isY) {
+        //             if (this.cellViews[view.x][view.y-1] && this.cellViews[view.x][view.y-1].type == view.type) {
+        //                 view.view.getComponent("CellView").toTipsLeft(ANITIME.TIPS);
+        //                 this.cellViews[view.x][view.y-1].getComponent("CellView").toTipsRight(ANITIME.TIPS);
+        //                 break;
+        //             }
+        //             else if (this.cellViews[view.x][view.y+1] && this.cellViews[view.x][view.y+1].type == view.type) {
+        //                 view.view.getComponent("CellView").toTipsRight(ANITIME.TIPS);
+        //                 this.cellViews[view.x][view.y+1].getComponent("CellView").toTipsDown(ANITIME.TIPS);
+        //                 break;
+        //             }
+        //             else if (view.isXIndex && this.cellViews[view.x+1] && this.cellViews[view.x+1][view.y].type == view.type) {
+        //                 view.view.getComponent("CellView").toTipsDown(ANITIME.TIPS);
+        //                 this.cellViews[view.x+1][view.y].getComponent("CellView").toTipsUp(ANITIME.TIPS);
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // }, this))).setTag(ANITIME.TIPS_ACTION_TAG);
     },
     stopTipsActions: function(){
         this.node.stopActionByTag(ANITIME.TIPS_ACTION_TAG);
