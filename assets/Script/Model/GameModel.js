@@ -644,14 +644,12 @@ export default class GameModel {
         this.changeModels = [];
         this.effectsQueue = [];
         this.curTime = ANITIME.TIPS;
-        let isSave = false;
 
         for (let i = 1; i <= GRID_WIDTH; i++) {
             for (let j = 1; j <= GRID_HEIGHT; j++) {
                 let views = this.cells[i][j];
                 let second = j+1;
                 let third = j+2;
-                isSave = false;
                 if (this.cells[i][second] != null && this.cells[i][third] != null) {
                     let direction = [];
                     if (this.cells[i][second].type == views.type) {
@@ -680,47 +678,44 @@ export default class GameModel {
                             if (pos.x == result[k].x && pos.y == result[k].y) {
                                 continue;
                             }
-                            if (lastPos.x == pos.x){
-                                if (result[k].y > pos.y) {
-                                    this.cells[result[k].y][result[k].x].toTipsDown(ANITIME.TIPS);
-                                    if (!isSave) {
-                                        this.cells[lastPos.y][lastPos.x].toTipsUp(ANITIME.TIPS);
-                                        this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
-                                        isSave = true;
-                                    }
-                                }
-                                else if (result[k].y < pos.y) {
-                                    this.cells[result[k].y][result[k].x].toTipsUp(ANITIME.TIPS);
-                                    if (!isSave) {
-                                        this.cells[lastPos.y][lastPos.x].toTipsDown(ANITIME.TIPS);
-                                        this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
-                                        isSave = true;
-                                    }
-                                }
-                            }
-                            else if (lastPos.x < pos.x) {
-                                this.cells[result[k].y][result[k].x].toTipsRight(ANITIME.TIPS);
-                                if (!isSave) {
-                                    this.cells[lastPos.y][lastPos.x].toTipsLeft(ANITIME.TIPS);
-                                    this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
-                                    isSave = true;
-                                }
-                            }
-                            else if(lastPos.x > pos.x) {
-                                //result up
-                                this.cells[result[k].y][result[k].x].toTipsLeft(ANITIME.TIPS);
-                                //last down
-                                if (!isSave) {
-                                    this.cells[lastPos.y][lastPos.x].toTipsRight(ANITIME.TIPS);
-                                    this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
-                                    isSave = true;
-                                }
-                            }
                             
+                            if (dir.x == 0) {
+                                if (dir.y > 0) {
+                                    this.cells[result[k].y][result[k].x].toTipsUp(ANITIME.TIPS);
+                                }
+                                else if (dir.y < 0) {
+                                    this.cells[result[k].y][result[k].x].toTipsDown(ANITIME.TIPS);
+                                }
+                            }
+                            else {
+                                if (lastPos.x > pos.x) {
+                                    this.cells[result[k].y][result[k].x].toTipsRight(ANITIME.TIPS);
+                                }
+                                else {
+                                    this.cells[result[k].y][result[k].x].toTipsLeft(ANITIME.TIPS);
+                                }
+                            }                            
                             this.pushToChangeModels(this.cells[result[k].y][result[k].x]);
                         }
                         
                         if (result.length >= 3) {
+                            if (dir.x == 0) {
+                                if (dir.y > 0) {
+                                    this.cells[lastPos.y][lastPos.x].toTipsDown(ANITIME.TIPS);
+                                }
+                                else if (dir.y < 0) {
+                                    this.cells[lastPos.y][lastPos.x].toTipsUp(ANITIME.TIPS);
+                                }
+                            }
+                            else {
+                                if (lastPos.x > pos.x) {
+                                    this.cells[lastPos.y][lastPos.x].toTipsLeft(ANITIME.TIPS);
+                                }
+                                else {
+                                    this.cells[lastPos.y][lastPos.x].toTipsRight(ANITIME.TIPS);
+                                }
+                            }
+                            this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
                             return [this.changeModels, this.effectsQueue];
                         }
                     }
@@ -728,7 +723,6 @@ export default class GameModel {
 
                 second = i+1;
                 third = i+2;
-                isSave = false;
                 if (this.cells[second] != null && this.cells[third] != null) {
                     let direction = [];
                     if (this.cells[second][j].type == views.type) {
@@ -758,46 +752,44 @@ export default class GameModel {
                             if (pos.x == result[k].x && pos.y == result[k].y) {
                                 continue;
                             }
-                            if (lastPos.y == pos.y){
-                                if (result[k].x > pos.x) {
-                                    this.cells[result[k].y][result[k].x].toTipsLeft(ANITIME.TIPS);
-                                    if (!isSave) {
-                                        this.cells[lastPos.y][lastPos.x].toTipsRight(ANITIME.TIPS);
-                                        this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
-                                        isSave = true;
-                                    }
-                                }
-                                else if (result[k].x < pos.x) {
+                            
+                            if (dir.y == 0) {
+                                if (dir.x > 0) {
                                     this.cells[result[k].y][result[k].x].toTipsRight(ANITIME.TIPS);
-                                    if (!isSave) {
-                                        this.cells[lastPos.y][lastPos.x].toTipsLeft(ANITIME.TIPS);
-                                        this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
-                                        isSave = true;
-                                    }
+                                }
+                                else if (dir.x < 0) {
+                                    this.cells[result[k].y][result[k].x].toTipsLeft(ANITIME.TIPS);
                                 }
                             }
-                            else if (lastPos.y < pos.y) {
-                                //result left
-                                this.cells[result[k].y][result[k].x].toTipsUp(ANITIME.TIPS);
-                                //last right
-                                if (!isSave) {
-                                    this.cells[lastPos.y][lastPos.x].toTipsDown(ANITIME.TIPS);
-                                    this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
-                                    isSave = true;
+                            else {
+                                if (lastPos.y > pos.y) {
+                                    this.cells[result[k].y][result[k].x].toTipsUp(ANITIME.TIPS);
                                 }
-                            }
-                            else if(lastPos.y > pos.y) {
-                                this.cells[result[k].y][result[k].x].toTipsDown(ANITIME.TIPS);
-                                if (!isSave) {
-                                    this.cells[lastPos.y][lastPos.x].toTipsUp(ANITIME.TIPS);
-                                    this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
-                                    isSave = true;
+                                else {
+                                    this.cells[result[k].y][result[k].x].toTipsDown(ANITIME.TIPS);
                                 }
-                            }
+                            }                            
                             this.pushToChangeModels(this.cells[result[k].y][result[k].x]);
                         }
                         
                         if (result.length >= 3) {
+                            if (dir.y == 0) {
+                                if (dir.x > 0) {
+                                    this.cells[lastPos.y][lastPos.x].toTipsLeft(ANITIME.TIPS);
+                                }
+                                else if (dir.x < 0) {
+                                    this.cells[lastPos.y][lastPos.x].toTipsRight(ANITIME.TIPS);
+                                }
+                            }
+                            else {
+                                if (lastPos.y > pos.y) {
+                                    this.cells[lastPos.y][lastPos.x].toTipsDown(ANITIME.TIPS);
+                                }
+                                else {
+                                    this.cells[lastPos.y][lastPos.x].toTipsUp(ANITIME.TIPS);
+                                }
+                            }
+                            this.pushToChangeModels(this.cells[lastPos.y][lastPos.x]);
                             return [this.changeModels, this.effectsQueue];
                         }
                     }
