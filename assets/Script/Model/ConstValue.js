@@ -51,6 +51,7 @@ window.INIT_GAME_SAVE_DATA = {
     items_refresh: 3,
     items_back: 5,
     items_change: 2, 
+    items_force:5,
     items_line: 2,
     items_column: 2,
     items_hammer: 3,

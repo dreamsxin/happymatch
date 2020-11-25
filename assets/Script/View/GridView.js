@@ -83,8 +83,14 @@ cc.Class({
             var touchPos = eventTouch.getLocation();
             var cellPos = this.convertTouchPosToCell(touchPos);
             if(cellPos){
-                var changeModels = this.selectCell(cellPos);
-                this.isCanMove = changeModels.length < 3;
+                if (this.itemsScrollview.isChange) {
+                    this.isCanMove = false;
+                    this.changeSelectCell(cellPos);
+                }
+                else {
+                    var changeModels = this.selectCell(cellPos);
+                    this.isCanMove = changeModels.length < 3;
+                }
             }
             else{
                 this.isCanMove = false;
@@ -128,8 +134,8 @@ cc.Class({
                 var cellPos = this.convertTouchPosToCell(touchPos);
                 if(startCellPos.x != cellPos.x || startCellPos.y != cellPos.y){
                     this.isCanMove = false;
-                    if (this.itemsScrollview.isChange) {
-                        this.changeSelectCell(cellPos);
+                    if (this.itemsScrollview.isForce) {
+                        this.forceSelectCell(cellPos);
                     }
                     else {
                         this.selectCell(cellPos);
@@ -343,8 +349,33 @@ cc.Class({
             this.audioUtils.playClick();
         }
 
-        this.itemsScrollview.isChange = false;
-        this.itemsScrollview.setChange(this.itemsScrollview.getChange()-1);
+        if (changeModels.length > 0) {
+            this.itemsScrollview.isChange = false;
+            this.itemsScrollview.setChange(this.itemsScrollview.getChange()-1);
+        }
+
+        return changeModels;
+    },
+    forceSelectCell: function(cellPos) {
+        var result = this.gameModel.forceSelectCell(cellPos);
+         
+        var changeModels = result[0]; // 有改变的cell，包含新生成的cell和生成马上摧毁的格子
+        var effectsQueue = result[1]; //各种特效
+        this.playEffect(effectsQueue);
+        this.disableTouch(this.getPlayAniTime(changeModels), this.getStep(effectsQueue));
+        this.updateView(changeModels);
+        this.gameModel.cleanCmd(); 
+        if(changeModels.length >= 2){
+            this.updateSelect(cc.v2(-1,-1));
+            this.audioUtils.playSwap();
+        }
+        else {
+            this.updateSelect(cellPos);
+            this.audioUtils.playClick();
+        }
+
+        this.itemsScrollview.isForce = false;
+        this.itemsScrollview.setForce(this.itemsScrollview.getForce()-1);
 
         return changeModels;
     },

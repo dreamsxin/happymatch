@@ -12,6 +12,7 @@ cc.Class({
         refreshLabel:cc.Label,
         backLabel:cc.Label,
         changeLabel:cc.Label,
+        forceLabel:cc.Label,
         lineLabel:cc.Label,
         columnLabel:cc.Label,
         hammerLabel:cc.Label,
@@ -27,6 +28,7 @@ cc.Class({
         this.refreshLabel.string = window.INIT_GAME_SAVE_DATA.items_refresh;
         this.backLabel.string = window.INIT_GAME_SAVE_DATA.items_back;
         this.changeLabel.string = window.INIT_GAME_SAVE_DATA.items_change;
+        this.forceLabel.string = window.INIT_GAME_SAVE_DATA.items_force;
         this.lineLabel.string = window.INIT_GAME_SAVE_DATA.items_line;
         this.columnLabel.string = window.INIT_GAME_SAVE_DATA.items_column;
         this.hammerLabel.string = window.INIT_GAME_SAVE_DATA.items_hammer;
