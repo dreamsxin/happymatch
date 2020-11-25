@@ -28,7 +28,9 @@ cc.Class({
             type: AudioUtils,
             default: null
         },
-        itemsScrollview:cc.ScrollView
+        itemsScrollview:cc.ScrollView,
+        scoreLabel:cc.Label,
+        stepsLabel:cc.Label
     },
 
 
@@ -40,6 +42,7 @@ cc.Class({
         this.isInPlayAni = false; // 是否在播放中
         this.itemsScrollview = this.itemsScrollview.getComponent("itemsScrollview");
         this.itemsScrollview.setGridView(this);
+        this.stepsLabel.string = window.INIT_GAME_SAVE_DATA.steps;
     },
     setController: function(controller){
         this.gameModel = controller;
@@ -379,5 +382,31 @@ cc.Class({
         this.updateSelect(cc.v2(-1,-1));
 
         return true;
+    },
+    getInPlayAni() {
+        return this.isInPlayAni;
+    },
+    updateSteps(){
+        this.addSteps += 1;
+        this.stepsLabel.string = Number(this.stepsLabel.string) + this.addSteps;
+        if (this.addSteps >= window.INIT_GAME_SAVE_DATA.steps) {
+            this.unschedule(this.updateSteps);
+            this.disableTouch(0.1);
+        }
+    },
+    setAddSteps() {
+        this.addSteps = 0;
+        this.schedule(this.updateSteps, 0.2);       
+    },
+    selectSteps() {
+        if (this.stepsLabel.string < window.ITEMS_ADD_STEPS_CONDITION) {    
+            this.gameModel.effectsQueue = [];
+            this.gameModel.addSteps(cc.v2(486.39, 713.858), this);
+            this.playEffect(this.gameModel.effectsQueue);
+            this.isInPlayAni = true;
+            this.updateSelect(cc.v2(-1,-1)); }
+        else {
+            cc.log("当前步数不低于6");
+        }
     }
 });

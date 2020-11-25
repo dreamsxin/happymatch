@@ -502,6 +502,14 @@ export default class GameModel {
     addWrapBomb(playTime, pos) {
         // TODO
     }
+
+    addSteps(pos, self) {
+        this.effectsQueue.push({
+            action: "addSteps",
+            pos,
+            gridView:self
+        });
+    }
     // cell消除逻辑
     crushCell(x, y, needShake, step) {
         let model = this.cells[y][x];
@@ -579,67 +587,6 @@ export default class GameModel {
         return [this.changeModels, this.effectsQueue];
     }
     
-    //this.cells[second][j],this.cells[third][j], cc.v2(third, j), ['x', 'y'], 
-    tipsHelp(secondCell, thirdCell, pos, dir) {
-        // let second = i+1;
-        // let third = i+2;
-        if (secondCell != null && thirdCell != null) {
-            let direction = [];
-            if (dir.first == 'x') {
-                if (this.cells[i][second].type == views.type) {
-                    direction = [cc.v2(0, 1), cc.v2(0, -1), cc.v2(1, 0)];
-                }
-                else if (this.cells[i][third].type == views.type) {
-                    direction = [cc.v2(0, 1), cc.v2(0, -1)];
-                }
-            }
-            else {
-                if (secondCell.type == views.type) {
-                    direction = [cc.v2(-1, 0), cc.v2(1, 0), cc.v2(0, 1)];
-                }
-                else if (thirdCell.type == views.type) {
-                    direction = [cc.v2(-1, 0), cc.v2(1, 0)];
-                }
-            }
-        
-            // let pos = cc.v2(third, j);
-            for (const dir of direction) {
-                let lastPos = cc.v2(dir.x+pos.x, dir.y+pos.y);
-                this.exchangeCell(lastPos, pos);
-                var [result, newCellStatus, newCellType] = this.checkPoint(pos.x, pos.y);
-                this.exchangeCell(lastPos, pos); 
-                if (result.length < 3) {
-                    continue;
-                }
-                for (var k in result) {
-                    if (pos.x == result[k].x && pos.y == result[k].y) {
-                        continue;
-                    }
-                    if (lastPos[dir.first] == pos[dir.first]){
-                        if (result[k][dir.second] > pos[dir.second]) {
-                            //down
-                        }
-                        else if (result[k][dir.second] < pos[dir.second]) {
-                            //up
-                        }
-                    }
-                    else if (lastPos[dir.first] < pos[dir.first]) {
-                        //result left
-                        //last right
-                    }
-                    else if(lastPos[dir.first] > pos[dir.first]) {
-                        //result right
-                        //last left
-                    }
-                }
-                
-                if (result.length >= 3) {
-                    return;
-                }
-            }
-        }
-    }
-
     tips() {
         this.changeModels = [];
         this.effectsQueue = [];

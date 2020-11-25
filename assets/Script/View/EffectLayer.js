@@ -26,7 +26,8 @@ cc.Class({
         audioUtils:{
             type: AudioUtils,
             default: null
-        }
+        },
+        addSteps: cc.Prefab
     },
 
     // use this for initialization
@@ -60,21 +61,32 @@ cc.Class({
                     animation  = instantEffect.getComponent(cc.Animation);
                     animation.play("effect_col");
                 }
+                else if (cmd.action == "addSteps") {
+                    instantEffect = cc.instantiate(this.addSteps);
+                    animation  = instantEffect.getComponent(cc.Animation);
+                    animation.play("effect");
+                }
 
-                instantEffect.x = CELL_WIDTH * (cmd.pos.x - 0.5);
-                instantEffect.y = CELL_WIDTH * (cmd.pos.y - 0.5);
+                if (cmd.action == "addSteps") {
+                    instantEffect.x = cmd.pos.x;
+                    instantEffect.y = cmd.pos.y;                    
+                }
+                else {
+                    instantEffect.x = CELL_WIDTH * (cmd.pos.x - 0.5);
+                    instantEffect.y = CELL_WIDTH * (cmd.pos.y - 0.5);
+                }
+
                 instantEffect.parent = this.node;
                 animation.on("finished",function(){
+                    if (cmd.action == "addSteps") {
+                        cmd.gridView.setAddSteps();
+                    }
+
                     instantEffect.destroy();
                 },this);
                
             },this);
             this.node.runAction(cc.sequence(delayTime, callFunc));
         },this);
-    },
-
-    // called every frame, uncomment this function to activate update callback
-    // update: function (dt) {
-
-    // },
+    }
 });

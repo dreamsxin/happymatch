@@ -15,7 +15,8 @@ cc.Class({
         lineLabel:cc.Label,
         columnLabel:cc.Label,
         hammerLabel:cc.Label,
-        magicLabel:cc.Label
+        magicLabel:cc.Label,
+        stepsLabel:cc.Label
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -30,6 +31,7 @@ cc.Class({
         this.columnLabel.string = window.INIT_GAME_SAVE_DATA.items_column;
         this.hammerLabel.string = window.INIT_GAME_SAVE_DATA.items_hammer;
         this.magicLabel.string = window.INIT_GAME_SAVE_DATA.items_magic;
+        this.stepsLabel.string = window.INIT_GAME_SAVE_DATA.items_steps;
 
         this.itemsSwitch = [];
     },
@@ -61,7 +63,7 @@ cc.Class({
         if (this["on" + name] == null) {
             let isSwitch = "is" + name;
             this["on" + name] = function() {
-                if(this.gridView.isInPlayAni){//播放动画中，不允许点击
+                if(this.gridView.getInPlayAni()){//播放动画中，不允许点击
                     return false;
                 }
 
@@ -86,7 +88,7 @@ cc.Class({
         if (this["on" + name] == null) {
             let isSwitch = "is" + name;
             this["on" + name] = function() {
-                if(this.gridView.isInPlayAni){//播放动画中，不允许点击
+                if(this.gridView.getInPlayAni()){//播放动画中，不允许点击
                     return false;
                 }
 
