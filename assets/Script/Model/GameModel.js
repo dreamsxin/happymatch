@@ -506,6 +506,12 @@ export default class GameModel {
             action: "crush",
             step
         });
+        this.effectsQueue.push({
+            playTime,
+            pos,
+            action: "crushBottom",
+            parent:window.gridView.node
+        });
     }
 
     addRowBomb(playTime, pos) {

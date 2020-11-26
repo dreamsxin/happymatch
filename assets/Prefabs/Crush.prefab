@@ -3,15 +3,29 @@
     "__type__": "cc.Prefab",
     "_name": "",
     "_objFlags": 0,
-    "_rawFiles": null,
+    "_native": "",
     "data": {
       "__id__": 1
-    }
+    },
+    "optimizationPolicy": 0,
+    "asyncLoadAssets": false,
+    "readonly": false
   },
   {
     "__type__": "cc.Node",
     "_name": "Crush",
     "_objFlags": 0,
+    "_parent": null,
+    "_children": [],
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 2
+      }
+    ],
+    "_prefab": {
+      "__id__": 3
+    },
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
@@ -20,39 +34,16 @@
       "b": 255,
       "a": 255
     },
-    "_cascadeOpacityEnabled": true,
-    "_parent": null,
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 0,
+      "height": 0
+    },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
       "x": 0.5,
       "y": 0.5
     },
-    "_contentSize": {
-      "__type__": "cc.Size",
-      "width": 39,
-      "height": 42
-    },
-    "_children": [],
-    "_skewX": 0,
-    "_skewY": 0,
-    "_localZOrder": 0,
-    "_globalZOrder": 0,
-    "_tag": -1,
-    "_opacityModifyRGB": false,
-    "_id": "",
-    "_active": true,
-    "_components": [
-      {
-        "__id__": 2
-      },
-      {
-        "__id__": 3
-      }
-    ],
-    "_prefab": {
-      "__id__": 4
-    },
-    "groupIndex": 0,
     "_trs": {
       "__type__": "TypedArray",
       "ctor": "Float64Array",
@@ -68,58 +59,69 @@
         1,
         1
       ]
-    }
-  },
-  {
-    "__type__": "cc.Sprite",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
     },
-    "_enabled": true,
-    "_spriteFrame": {
-      "__uuid__": "15970ffd-ea44-4afa-b106-21b3c1645005"
-    },
-    "_type": 0,
-    "_sizeMode": 1,
-    "_fillType": 0,
-    "_fillCenter": {
-      "__type__": "cc.Vec2",
+    "_eulerAngles": {
+      "__type__": "cc.Vec3",
       "x": 0,
-      "y": 0
+      "y": 0,
+      "z": 0
     },
-    "_fillStart": 0,
-    "_fillRange": 0,
-    "_isTrimmedMode": true,
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 771,
-    "_atlas": null
+    "_skewX": 0,
+    "_skewY": 0,
+    "_is3DNode": false,
+    "_groupIndex": 0,
+    "groupIndex": 0,
+    "_id": ""
   },
   {
-    "__type__": "cc.Animation",
+    "__type__": "dragonBones.ArmatureDisplay",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 1
     },
     "_enabled": true,
-    "_defaultClip": {
-      "__uuid__": "21a7e608-0ca6-4d88-b8e2-f68e9c335eca"
-    },
-    "_clips": [
+    "_materials": [
       {
-        "__uuid__": "21a7e608-0ca6-4d88-b8e2-f68e9c335eca"
+        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
       }
     ],
-    "playOnLoad": true
+    "_armatureName": "putongxiaochu",
+    "_animationName": "ani_shangceng",
+    "_preCacheMode": 0,
+    "_cacheMode": 0,
+    "playTimes": 1,
+    "premultipliedAlpha": false,
+    "_armatureKey": "d752cae0-345f-4c3b-bef4-b8e68ce6618a#7a1f0e19-f1be-4d0b-8940-faabf1eac708",
+    "_accTime": 0,
+    "_playCount": 0,
+    "_frameCache": null,
+    "_curFrame": null,
+    "_playing": false,
+    "_armatureCache": null,
+    "_N$dragonAsset": {
+      "__uuid__": "d752cae0-345f-4c3b-bef4-b8e68ce6618a"
+    },
+    "_N$dragonAtlasAsset": {
+      "__uuid__": "7a1f0e19-f1be-4d0b-8940-faabf1eac708"
+    },
+    "_N$_defaultArmatureIndex": 0,
+    "_N$_animationIndex": 1,
+    "_N$_defaultCacheMode": 0,
+    "_N$timeScale": 1,
+    "_N$debugBones": false,
+    "_N$enableBatch": false,
+    "_id": ""
   },
   {
     "__type__": "cc.PrefabInfo",
     "root": {
       "__id__": 1
     },
-    "asset": null,
-    "fileId": "80cc6tVwhZMV42j8Tm2BA7H"
+    "asset": {
+      "__uuid__": "3b260bf3-fddb-415d-9d29-4247d176144e"
+    },
+    "fileId": "",
+    "sync": false
   }
 ]

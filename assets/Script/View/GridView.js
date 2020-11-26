@@ -43,6 +43,10 @@ cc.Class({
         this.itemsScrollview = this.itemsScrollview.getComponent("itemsScrollview");
         this.itemsScrollview.setGridView(this);
         this.stepsLabel.string = window.INIT_GAME_SAVE_DATA.steps;
+
+        this.node.getChildByName("bg").zIndex = -2;
+        this.effectLayer = this.effectLayer.getComponent("EffectLayer");
+        window.gridView = this;
     },
     setController: function(controller){
         this.gameModel = controller;
@@ -303,7 +307,7 @@ cc.Class({
          
         var changeModels = result[0]; // 有改变的cell，包含新生成的cell和生成马上摧毁的格子
         var effectsQueue = result[1]; //各种特效
-        this.playEffect(effectsQueue);
+        this.playDragonBones(effectsQueue);
         this.disableTouch(this.getPlayAniTime(changeModels), this.getStep(effectsQueue));
         this.updateView(changeModels);
         this.gameModel.cleanCmd(); 
@@ -336,7 +340,7 @@ cc.Class({
          
         var changeModels = result[0]; // 有改变的cell，包含新生成的cell和生成马上摧毁的格子
         var effectsQueue = result[1]; //各种特效
-        this.playEffect(effectsQueue);
+        this.playDragonBones(effectsQueue);
         this.disableTouch(this.getPlayAniTime(changeModels), this.getStep(effectsQueue));
         this.updateView(changeModels);
         this.gameModel.cleanCmd(); 
@@ -361,7 +365,7 @@ cc.Class({
          
         var changeModels = result[0]; // 有改变的cell，包含新生成的cell和生成马上摧毁的格子
         var effectsQueue = result[1]; //各种特效
-        this.playEffect(effectsQueue);
+        this.playDragonBones(effectsQueue);
         this.disableTouch(this.getPlayAniTime(changeModels), this.getStep(effectsQueue));
         this.updateView(changeModels);
         this.gameModel.cleanCmd(); 
@@ -380,7 +384,10 @@ cc.Class({
         return changeModels;
     },
     playEffect: function(effectsQueue){
-        this.effectLayer.getComponent("EffectLayer").playEffects(effectsQueue);
+        this.effectLayer.playEffects(effectsQueue);
+    },
+    playDragonBones: function(effectsQueue){
+        this.effectLayer.playDragonBones(effectsQueue);
     },
     selectBack() {
         let result = this.gameModel.selectBack();
@@ -390,7 +397,7 @@ cc.Class({
         }
 
         var effectsQueue = result[1]; //各种特效
-        this.playEffect(effectsQueue);
+        this.playDragonBones(effectsQueue);
         this.disableTouch(this.getPlayAniTime(changeModels), this.getStep(effectsQueue));
         this.updateView(changeModels);
         this.gameModel.cleanCmd();
@@ -406,7 +413,7 @@ cc.Class({
         }
 
         var effectsQueue = result[1]; //各种特效
-        this.playEffect(effectsQueue);
+        this.playDragonBones(effectsQueue);
         this.disableTouch(this.getPlayAniTime(changeModels), this.getStep(effectsQueue));
         this.updateView(changeModels);
         this.gameModel.cleanCmd();
@@ -427,7 +434,7 @@ cc.Class({
     },
     setAddSteps() {
         this.addSteps = 0;
-        this.schedule(this.updateSteps, 0.2);       
+        this.schedule(this.updateSteps, 0.2);
     },
     selectSteps() {
         if (this.stepsLabel.string < window.ITEMS_ADD_STEPS_CONDITION) {    
