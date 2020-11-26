@@ -19,7 +19,8 @@ cc.Class({
         bombLine:cc.Prefab,
         bombColumn:cc.Prefab,
         crushEffect:cc.Prefab,
-        addSteps: cc.Prefab
+        wrapBomb:cc.Prefab,
+        addSteps:cc.Prefab,
     },
 
     // use this for initialization
@@ -110,6 +111,10 @@ cc.Class({
                 else if(cmd.action == "colBomb"){
                     instantEffect = cc.instantiate(this.bombColumn);
                     animation  = instantEffect.getChildByName("ani_dian").getComponent(dragonBones.ArmatureDisplay);
+                }
+                else if (cmd.action == "wrapBomb"){
+                    instantEffect = cc.instantiate(this.wrapBomb);
+                    animation = instantEffect.getComponent(dragonBones.ArmatureDisplay);
                 }
 
                 instantEffect.x = CELL_WIDTH * (cmd.pos.x - 0.5);

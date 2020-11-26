@@ -38,7 +38,9 @@ export const ANITIME = {
     DIE_SHAKE: 0.4, // 死前抖动
     TIPS:0.4,
     TIPS_ACTION_TAG:10000,
-    SHOW:0.2
+    SHOW:0.2,
+    BOMB_INSIDE:0.1,
+    BOMB_OUTSIDE:0.2
 }
 
 window.GAME_SAVE_HANDLER = 'handler_data';
@@ -48,15 +50,15 @@ window.INIT_GAME_SAVE_DATA = {
     top_level: 0,
     login_time: "",
     steps:5,
-    items_refresh: 3,
-    items_back: 5,
-    items_change: 2, 
-    items_force:5,
-    items_line: 2,
-    items_column: 2,
-    items_hammer: 3,
-    items_magic: 1,
-    items_steps: 5
+    items_refresh: 13,
+    items_back: 15,
+    items_change: 12, 
+    items_force:15,
+    items_line: 12,
+    items_column: 12,
+    items_hammer: 13,
+    items_magic: 11,
+    items_steps: 15
 };
 
 window.ITEMS_ADD_STEPS_CONDITION = 6;

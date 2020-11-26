@@ -82,16 +82,23 @@ export default class GameModel {
         let colResult = checkWithDirection.call(this, x, y, [cc.v2(0, -1), cc.v2(0, 1)]);
         let result = [];
         let newCellStatus = "";
+        
+        //当两只魔力鸟同时交换的时候，就会达到清屏的技能，整个屏幕上的动物都会消失
+
         if (rowResult.length >= 5 || colResult.length >= 5) {
+            //任意五个'同行'且相同的动物可以合成一个'魔力鸟'特效
             newCellStatus = CELL_STATUS.BIRD;
         }
         else if (rowResult.length >= 3 && colResult.length >= 3) {
+            //五个相同的'不同行'动物可以合成一个'爆炸特效'
             newCellStatus = CELL_STATUS.WRAP;
         }
         else if (rowResult.length >= 4) {
+            //四个相同的动物一行或一列可以合成一个直线特效
             newCellStatus = CELL_STATUS.LINE;
         }
         else if (colResult.length >= 4) {
+            //四个相同的动物一行或一列可以合成一个直线特效
             newCellStatus = CELL_STATUS.COLUMN;
         }
         if (rowResult.length >= 3) {
@@ -460,10 +467,11 @@ export default class GameModel {
                                 if (this.cells[i][j].status != CELL_STATUS.COMMON) {
                                     newBombModel.push(this.cells[i][j]);
                                 }
-                                this.crushCell(j, i, false, cycleCount);
+                                this.crushWrapCell(j, i, cc.v2(x, y), delta <= 1);
                             }
                         }
                     }
+                    this.addWrapBomb(this.curTime, cc.v2(x, y));
                 }
                 else if (model.status == CELL_STATUS.BIRD) {
                     let crushType = model.type
@@ -531,7 +539,11 @@ export default class GameModel {
     }
 
     addWrapBomb(playTime, pos) {
-        // TODO
+        this.effectsQueue.push({
+            playTime,
+            pos,
+            action: "wrapBomb"            
+        });
     }
 
     addSteps(pos, self) {
@@ -552,6 +564,18 @@ export default class GameModel {
         let shakeTime = needShake ? ANITIME.DIE_SHAKE : 0;
         model.toDie(this.curTime + shakeTime);
         this.addCrushEffect(this.curTime + shakeTime, cc.v2(model.x, model.y), step);
+        this.cells[y][x] = null;
+    }
+
+    crushWrapCell(x, y, vCenter, isInside) {
+        let model = this.cells[y][x];
+        this.pushToChangeModels(model);
+        if (isInside) {
+            model.toInsideBomb(this.curTime+ANITIME.BOMB_INSIDE, vCenter);
+        }
+        else {
+            model.toOutsideBomb(this.curTime+ANITIME.BOMB_OUTSIDE, vCenter);
+        }
         this.cells[y][x] = null;
     }
 

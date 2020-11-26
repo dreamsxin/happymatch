@@ -256,21 +256,21 @@ cc.Class({
         }, 0);
     },
     tips() {
-        this.stopTipsActions();
+        // this.stopTipsActions();
 
-        this.node.runAction(cc.sequence(cc.delayTime(5),cc.callFunc(function(){
-            var result = this.gameModel.tips();
-            this.updateView(result[0]);
-            this.gameModel.cleanCmd();
-        }, this))).setTag(ANITIME.TIPS_ACTION_TAG);
+        // this.node.runAction(cc.sequence(cc.delayTime(5),cc.callFunc(function(){
+        //     var result = this.gameModel.tips();
+        //     this.updateView(result[0]);
+        //     this.gameModel.cleanCmd();
+        // }, this))).setTag(ANITIME.TIPS_ACTION_TAG);
     },
     stopTipsActions: function(){
-        this.node.stopActionByTag(ANITIME.TIPS_ACTION_TAG);
-        for(var i = 1;i <=GRID_WIDTH ;i++){
-            for(var j = 1 ;j <=GRID_HEIGHT ;j ++){
-                this.cellViews[i][j].stopActionByTag(ANITIME.TIPS_ACTION_TAG); 
-            }
-        }
+        // this.node.stopActionByTag(ANITIME.TIPS_ACTION_TAG);
+        // for(var i = 1;i <=GRID_WIDTH ;i++){
+        //     for(var j = 1 ;j <=GRID_HEIGHT ;j ++){
+        //         this.cellViews[i][j].stopActionByTag(ANITIME.TIPS_ACTION_TAG); 
+        //     }
+        // }
     },
     //一段时间内禁止操作
     disableTouch: function(time, step){

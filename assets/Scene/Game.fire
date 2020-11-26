@@ -17,10 +17,10 @@
         "__id__": 2
       },
       {
-        "__id__": 114
+        "__id__": 115
       },
       {
-        "__id__": 116
+        "__id__": 117
       }
     ],
     "_active": false,
@@ -91,10 +91,10 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 112
+        "__id__": 113
       },
       {
-        "__id__": 113
+        "__id__": 114
       }
     ],
     "_prefab": null,
@@ -284,10 +284,10 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 110
+        "__id__": 111
       },
       {
-        "__id__": 111
+        "__id__": 112
       }
     ],
     "_prefab": null,
@@ -1204,6 +1204,9 @@
     },
     "crushEffect": {
       "__uuid__": "3b260bf3-fddb-415d-9d29-4247d176144e"
+    },
+    "wrapBomb": {
+      "__uuid__": "a6cfbb6d-61c5-449d-891c-5a73bcb51f3b"
     },
     "addSteps": {
       "__uuid__": "a80c15bc-5c4a-4337-b022-08e3061e9165"
@@ -5140,7 +5143,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "New Node",
+    "_name": "wrapBomb",
     "_objFlags": 0,
     "_parent": {
       "__id__": 5
@@ -5152,7 +5155,9 @@
         "__id__": 109
       }
     ],
-    "_prefab": null,
+    "_prefab": {
+      "__id__": 110
+    },
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
@@ -5213,13 +5218,13 @@
         "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
       }
     ],
-    "_armatureName": "putongxiaochu",
-    "_animationName": "ani_shangceng",
+    "_armatureName": "5lianbaozha",
+    "_animationName": "ani1",
     "_preCacheMode": 0,
     "_cacheMode": 0,
     "playTimes": -1,
     "premultipliedAlpha": false,
-    "_armatureKey": "d752cae0-345f-4c3b-bef4-b8e68ce6618a#7a1f0e19-f1be-4d0b-8940-faabf1eac708",
+    "_armatureKey": "4209c8cd-1052-43b1-9757-f2c967e5252b#21bc074d-1361-4f85-8922-aca81427a090",
     "_accTime": 0,
     "_playCount": 0,
     "_frameCache": null,
@@ -5227,10 +5232,10 @@
     "_playing": false,
     "_armatureCache": null,
     "_N$dragonAsset": {
-      "__uuid__": "d752cae0-345f-4c3b-bef4-b8e68ce6618a"
+      "__uuid__": "4209c8cd-1052-43b1-9757-f2c967e5252b"
     },
     "_N$dragonAtlasAsset": {
-      "__uuid__": "7a1f0e19-f1be-4d0b-8940-faabf1eac708"
+      "__uuid__": "21bc074d-1361-4f85-8922-aca81427a090"
     },
     "_N$_defaultArmatureIndex": 0,
     "_N$_animationIndex": 1,
@@ -5239,6 +5244,17 @@
     "_N$debugBones": false,
     "_N$enableBatch": false,
     "_id": "22d+JTcphFd5aLUsiLZAV5"
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 108
+    },
+    "asset": {
+      "__uuid__": "a6cfbb6d-61c5-449d-891c-5a73bcb51f3b"
+    },
+    "fileId": "",
+    "sync": false
   },
   {
     "__type__": "5ac64Iq16lBqrHZ0246FRcZ",
@@ -5327,7 +5343,7 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 115
+        "__id__": 116
       }
     ],
     "_prefab": null,
@@ -5384,7 +5400,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 114
+      "__id__": 115
     },
     "_enabled": true,
     "_id": "bdVxVhx/VB5I5+jqNqR2wI"
@@ -5400,7 +5416,7 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 117
+        "__id__": 118
       }
     ],
     "_prefab": null,
@@ -5456,7 +5472,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 116
+      "__id__": 117
     },
     "_enabled": true,
     "_materials": [

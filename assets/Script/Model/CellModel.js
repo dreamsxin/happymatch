@@ -131,4 +131,21 @@ export default class CellModel {
         return this.type == CELL_TYPE.G;
     }
 
+    toInsideBomb(playTime, vCenter) {
+        this.cmd.push({
+            action: "toInsideBomb",
+            playTime: playTime,
+            keepTime: 0,
+            vCenter
+        });
+    }
+
+    toOutsideBomb(playTime, vCenter) {
+        this.cmd.push({
+            action: "toOutsideBomb",
+            playTime: playTime,
+            keepTime: 0,
+            vCenter
+        });
+    }
 }
