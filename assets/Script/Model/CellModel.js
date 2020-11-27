@@ -137,6 +137,7 @@ export default class CellModel {
             playTime: playTime,
             keepTime: ANITIME.WARAP_TOTAL
         });
+        this.isDeath = true;
     }
     toWrapInside(playTime, vCenter) {
         this.cmd.push({
@@ -145,6 +146,7 @@ export default class CellModel {
             keepTime: ANITIME.WARAP_TOTAL,
             vCenter
         });
+        this.isDeath = true;
     }
 
     toWrapOutside(playTime, vCenter) {
@@ -154,5 +156,16 @@ export default class CellModel {
             keepTime: ANITIME.WARAP_TOTAL,
             vCenter
         });
+        this.isDeath = true;
+    }
+
+    toAttract(playTime, vCenter) {
+        this.cmd.push({
+            action: "toAttract",
+            playTime: playTime,
+            keepTime: ANITIME.BOMB_BIRD_DELAY,
+            vCenter
+        });
+        this.isDeath = true;
     }
 }

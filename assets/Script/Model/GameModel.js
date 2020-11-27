@@ -485,17 +485,19 @@ export default class GameModel {
                     if (crushType == CELL_TYPE.BIRD) {
                         crushType = this.getRandomCellType();
                     }
+                    let vCenter = cc.v2(model.x, model.y);
                     for (let i = 1; i <= GRID_HEIGHT; i++) {
                         for (let j = 1; j <= GRID_WIDTH; j++) {
                             if (this.cells[i][j] && this.cells[i][j].type == crushType) {
                                 if (this.cells[i][j].status != CELL_STATUS.COMMON) {
                                     newBombModel.push(this.cells[i][j]);
                                 }
-                                this.crushCell(j, i, true, cycleCount);
+                                this.crushBirdCell(j, i, vCenter);
                             }
                         }
                     }
                     //this.crushCell(model.x, model.y);
+                    this.addBirdBomb(this.curTime, vCenter);
                 }
             }, this);
             if (bombModels.length > 0) {
@@ -550,6 +552,14 @@ export default class GameModel {
         });
     }
 
+    addBirdBomb(playTime, pos) {
+        this.effectsQueue.push({
+            playTime,
+            pos,
+            action: "birdBomb"
+        });
+    }
+
     addSteps(pos, self) {
         this.effectsQueue.push({
             action: "addSteps",
@@ -583,6 +593,15 @@ export default class GameModel {
         else {
             model.toWrapOutside(this.curTime, vCenter);
         }
+        this.cells[y][x] = null;
+    }
+
+    crushBirdCell(x, y, vCenter) {
+        let model = this.cells[y][x];
+        this.pushToChangeModels(model);
+        model.toShake(this.curTime);
+
+        model.toAttract(this.curTime + ANITIME.DIE_SHAKE, vCenter);
         this.cells[y][x] = null;
     }
 

@@ -20,6 +20,7 @@ cc.Class({
         bombColumn:cc.Prefab,
         crushEffect:cc.Prefab,
         wrapBomb:cc.Prefab,
+        birdBomb:cc.Prefab,
         addSteps:cc.Prefab,
     },
 
@@ -114,6 +115,10 @@ cc.Class({
                 }
                 else if (cmd.action == "wrapBomb"){
                     instantEffect = cc.instantiate(this.wrapBomb);
+                    animation = instantEffect.getComponent(dragonBones.ArmatureDisplay);
+                }
+                else if (cmd.action == "birdBomb") {
+                    instantEffect = cc.instantiate(this.birdBomb);
                     animation = instantEffect.getComponent(dragonBones.ArmatureDisplay);
                 }
 

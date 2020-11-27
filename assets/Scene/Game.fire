@@ -182,7 +182,7 @@
       "array": [
         0,
         0,
-        458.1274386019681,
+        494.5005055609145,
         0,
         0,
         0,
@@ -1204,6 +1204,9 @@
     },
     "wrapBomb": {
       "__uuid__": "a6cfbb6d-61c5-449d-891c-5a73bcb51f3b"
+    },
+    "birdBomb": {
+      "__uuid__": "79fab5ed-5fe9-4c89-b3f1-0f626b907c72"
     },
     "addSteps": {
       "__uuid__": "a80c15bc-5c4a-4337-b022-08e3061e9165"
@@ -5140,7 +5143,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "wrapBomb",
+    "_name": "birdBomb",
     "_objFlags": 0,
     "_parent": {
       "__id__": 5
@@ -5200,7 +5203,7 @@
     "_is3DNode": false,
     "_groupIndex": 0,
     "groupIndex": 0,
-    "_id": "40quFqKqtHXq0N6vXIPLPW"
+    "_id": "a8vB7leNFG56adSaXBKTLb"
   },
   {
     "__type__": "dragonBones.ArmatureDisplay",
@@ -5215,13 +5218,13 @@
         "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
       }
     ],
-    "_armatureName": "5lianbaozha",
+    "_armatureName": "moliniao",
     "_animationName": "ani1",
     "_preCacheMode": 0,
     "_cacheMode": 0,
-    "playTimes": -1,
+    "playTimes": 1,
     "premultipliedAlpha": false,
-    "_armatureKey": "4209c8cd-1052-43b1-9757-f2c967e5252b#21bc074d-1361-4f85-8922-aca81427a090",
+    "_armatureKey": "4a7a33e0-6b49-44db-8322-df31f15e7388#9fa62903-0f2f-4724-bf31-e69d2a3cd5aa",
     "_accTime": 0,
     "_playCount": 0,
     "_frameCache": null,
@@ -5229,10 +5232,10 @@
     "_playing": false,
     "_armatureCache": null,
     "_N$dragonAsset": {
-      "__uuid__": "4209c8cd-1052-43b1-9757-f2c967e5252b"
+      "__uuid__": "4a7a33e0-6b49-44db-8322-df31f15e7388"
     },
     "_N$dragonAtlasAsset": {
-      "__uuid__": "21bc074d-1361-4f85-8922-aca81427a090"
+      "__uuid__": "9fa62903-0f2f-4724-bf31-e69d2a3cd5aa"
     },
     "_N$_defaultArmatureIndex": 0,
     "_N$_animationIndex": 1,
@@ -5240,7 +5243,7 @@
     "_N$timeScale": 1,
     "_N$debugBones": false,
     "_N$enableBatch": false,
-    "_id": "22d+JTcphFd5aLUsiLZAV5"
+    "_id": "27CkNsH2BDcbhUh1q3sgyo"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -5248,7 +5251,7 @@
       "__id__": 108
     },
     "asset": {
-      "__uuid__": "a6cfbb6d-61c5-449d-891c-5a73bcb51f3b"
+      "__uuid__": "79fab5ed-5fe9-4c89-b3f1-0f626b907c72"
     },
     "fileId": "",
     "sync": false

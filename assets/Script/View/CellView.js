@@ -62,11 +62,11 @@ cc.Class({
                 actionArray.push(move);
             }
             else if(cmd[i].action == "toDie"){
-                if(this.status == CELL_STATUS.BIRD){
-                    let animation = this.node.getComponent(cc.Animation);
-                    animation.play("effect");
-                    actionArray.push(cc.delayTime(ANITIME.BOMB_BIRD_DELAY));
-                }
+                // if(this.status == CELL_STATUS.BIRD){
+                //     let animation = this.node.getComponent(cc.Animation);
+                //     animation.play("effect");
+                //     actionArray.push(cc.delayTime(ANITIME.BOMB_BIRD_DELAY));
+                // }
                 var callFunc = cc.callFunc(function(){
                     this.node.destroy();
                 },this);
@@ -127,6 +127,22 @@ cc.Class({
                 let sequence = cc.sequence(cc.delayTime(0.2), cc.moveBy(0.4, vDir), cc.delayTime(0.1)
                 , cc.scaleTo(0.3, 0), cc.callFunc(function(){
                         this.node.destroy();
+                },this));
+                actionArray.push(sequence);
+            }
+            else if (cmd[i].action == "toAttract") {
+                let startTime = 0.4;
+                let sequence = cc.sequence(cc.delayTime(startTime), cc.callFunc(function(){
+                    this.vCenter = cc.v2((cmd[i].vCenter.x - 0.5) * CELL_WIDTH, (cmd[i].vCenter.y - 0.5) * CELL_HEIGHT);
+                    this.vDir = cc.v2(this.node.x-cmd[i].vCenter.x, this.node.y-cmd[i].vCenter.y);
+                    this.attractRadius = this.vDir.mag();
+                    this.attractRotate = 0;
+                    //总时间减去 动画前后空白的时间
+                    this.attractSpeed = this.attractRadius/(ANITIME.BOMB_BIRD_DELAY-startTime-(ANITIME.BOMB_BIRD_DELAY-3.5)-0.3);
+                    this.attractSpeed1 = 0;
+                    this.schedule(this.updateRotate, 0);
+                    this.node.runAction(cc.repeatForever(cc.rotateBy(1, -360)));
+                    this.node.zIndex = 10000;
                 },this));
                 actionArray.push(sequence);
             }
@@ -191,5 +207,16 @@ cc.Class({
         var repeat = cc.moveTo(0, cc.v2(this.node.x, this.node.y));
         let sequence = cc.sequence(cc.repeat(cc.sequence(move, repeat), 2), cc.delayTime(2));
         this.node.runAction(cc.repeatForever(sequence)).setTag(ANITIME.TIPS_ACTION_TAG);
+    },
+    updateRotate(delta) {
+        this.node.x = this.vCenter.x + Math.cos(this.vDir.angle(cc.v2(1, 0)))*this.attractRadius;
+        this.node.y = this.vCenter.y + Math.sin(this.vDir.angle(cc.v2(1, 0)))*this.attractRadius;
+        this.vDir = this.vDir.rotate(-this.attractRotate);
+        if (Math.abs(this.node.x-this.vCenter.x) < 10 && Math.abs(this.node.y-this.vCenter.y) < 10) {
+            this.unschedule(this.updateRotate);
+            this.node.destroy();
+        }
+        this.attractRadius -= delta*this.attractSpeed;
+        this.attractRotate += delta*this.attractSpeed;
     }
 });
