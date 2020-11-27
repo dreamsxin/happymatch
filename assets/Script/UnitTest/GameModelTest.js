@@ -21,7 +21,7 @@ cc.Class({
     //     gameModel.printInfo();
     //     for(var i = 1;i<=9;i++){
     //         for(var j = 1;j<=9;j++){
-    //             console.log(gameModel.checkPoint(i,j).join(" ,"));
+    //             cc.log(gameModel.checkPoint(i,j).join(" ,"));
     //         }
     //     }
     // },

@@ -65,7 +65,7 @@ cc.Class({
         cc.audioEngine.play(this.eliminate[step], false, 1);
     },
     playContinuousMatch: function(step){
-        console.log("step = ", step);
+        cc.log("step = ", step);
         step = Math.min(step, 11);
         if(step < 2){
             return 

@@ -127,7 +127,7 @@ export default class GameModel {
             for (var j = 1; j <= 9; j++) {
                 printStr += this.cells[i][j].type + " ";
             }
-            console.log(printStr);
+            cc.log(printStr);
         }
     }
 
@@ -412,7 +412,7 @@ export default class GameModel {
     // 设置种类
     // Todo 改成乱序算法
     setCellTypeNum(num) {
-        console.log("num = ", num);
+        cc.log("num = ", num);
         this.cellTypeNum = num;
         this.cellCreateType = [];
         let createTypeList = this.cellCreateType;
