@@ -458,6 +458,10 @@ export default class GameModel {
                     this.addColBomb(this.curTime, cc.v2(model.x, model.y));
                 }
                 else if (model.status == CELL_STATUS.WRAP) {
+                    if (bombTime < ANITIME.WARAP_TOTAL) {
+                        bombTime = ANITIME.WARAP_TOTAL;
+                    }
+
                     let x = model.x;
                     let y = model.y;
                     for (let i = 1; i <= GRID_HEIGHT; i++) {
@@ -467,7 +471,7 @@ export default class GameModel {
                                 if (this.cells[i][j].status != CELL_STATUS.COMMON) {
                                     newBombModel.push(this.cells[i][j]);
                                 }
-                                this.crushWrapCell(j, i, cc.v2(x, y), delta <= 1);
+                                this.crushWrapCell(j, i, cc.v2(x, y), delta);
                             }
                         }
                     }
@@ -567,14 +571,17 @@ export default class GameModel {
         this.cells[y][x] = null;
     }
 
-    crushWrapCell(x, y, vCenter, isInside) {
+    crushWrapCell(x, y, vCenter, delta) {
         let model = this.cells[y][x];
         this.pushToChangeModels(model);
-        if (isInside) {
-            model.toInsideBomb(this.curTime+ANITIME.BOMB_INSIDE, vCenter);
+        if (delta == 0) {
+            model.toWrapCenter(this.curTime);
+        }
+        else if (delta == 1) {
+            model.toWrapInside(this.curTime, vCenter);
         }
         else {
-            model.toOutsideBomb(this.curTime+ANITIME.BOMB_OUTSIDE, vCenter);
+            model.toWrapOutside(this.curTime, vCenter);
         }
         this.cells[y][x] = null;
     }

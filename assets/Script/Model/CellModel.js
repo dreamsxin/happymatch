@@ -131,20 +131,27 @@ export default class CellModel {
         return this.type == CELL_TYPE.G;
     }
 
-    toInsideBomb(playTime, vCenter) {
+    toWrapCenter(playTime){
         this.cmd.push({
-            action: "toInsideBomb",
+            action: "toWrapCenter",
             playTime: playTime,
-            keepTime: 0,
+            keepTime: ANITIME.WARAP_TOTAL
+        });
+    }
+    toWrapInside(playTime, vCenter) {
+        this.cmd.push({
+            action: "toWrapInside",
+            playTime: playTime,
+            keepTime: ANITIME.WARAP_TOTAL,
             vCenter
         });
     }
 
-    toOutsideBomb(playTime, vCenter) {
+    toWrapOutside(playTime, vCenter) {
         this.cmd.push({
-            action: "toOutsideBomb",
+            action: "toWrapOutside",
             playTime: playTime,
-            keepTime: 0,
+            keepTime: ANITIME.WARAP_TOTAL,
             vCenter
         });
     }

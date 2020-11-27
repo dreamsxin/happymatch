@@ -100,34 +100,38 @@ cc.Class({
             else if (cmd[i].action == "toTipsDown") {
                 this.toTipsDown(cmd[i].playTime);
             }
-            else if (cmd[i].action == "toInsideBomb") {
-                //距离中心的一格的图标：0.1s开始远离中心图标，在0.3s位移20像素，然后0.4s开始缩小，0.7s缩小到0
+            else if (cmd[i].action == "toWrapCenter") {
+                let sequence = cc.sequence(cc.scaleTo(ANITIME.WARAP_TOTAL, 0), cc.callFunc(function(){
+                    this.node.destroy();
+                },this));
+                actionArray.push(sequence);
+            }
+            else if (cmd[i].action == "toWrapInside") {
+                // 距离中心的一格的图标：0.1s开始远离中心图标，在0.3s位移20像素，然后0.4s开始缩小，0.7s缩小到0
                 let vCenter = cc.v2((cmd[i].vCenter.x - 0.5) * CELL_WIDTH, (cmd[i].vCenter.y - 0.5) * CELL_HEIGHT);
                 let vDir = cc.v2(this.node.x-vCenter.x, this.node.y-vCenter.y);
-                // cc.log(vDir);
-                // vDir = vDir.add(cc.v2(this.node.x+20, this.node.y+20));
-                vDir = vDir.add(cc.v2(20, 20));
-                let sequence = cc.sequence(cc.moveBy(0.3, vDir), cc.delayTime(0.1), cc.scaleTo(0.3, 0)
-                    ,cc.callFunc(function(){
+                vDir = vDir.normalize().mul(20);
+                // vDir = vDir.add(cc.v2(this.node.x, this.node.y));
+                let sequence = cc.sequence(cc.delayTime(0.1), cc.moveBy(0.3, vDir), cc.delayTime(0.1)
+                , cc.scaleTo(0.3, 0), cc.callFunc(function(){
                         this.node.destroy();
                 },this));
                 actionArray.push(sequence);
             }
-            else if (cmd[i].action == "toOutsideBomb") {
+            else if (cmd[i].action == "toWrapOutside") {
                 //距离中心的二格的图标：0.2s开始远离中心图标，在0.4s位移60像素，然后0.4s开始缩小，0.7s缩小到0
                 let vCenter = cc.v2((cmd[i].vCenter.x - 0.5) * CELL_WIDTH, (cmd[i].vCenter.y - 0.5) * CELL_HEIGHT);
                 let vDir = cc.v2(this.node.x-vCenter.x, this.node.y-vCenter.y);
-                cc.log("111111111111111");
-                cc.log(vDir.x, vDir.y);
-                // vDir = vDir.add(cc.v2(this.node.x+60, this.node.y+60));
-                vDir = vDir.add(cc.v2(60, 60));
-                cc.log(this.node.x, this.node.y);
-                cc.log(vDir.x, vDir.y);
-                let sequence = cc.sequence(cc.moveBy(0.4, vDir), cc.delayTime(0.1), cc.scaleTo(0.3, 0)
-                    ,cc.callFunc(function(){
+                vDir = vDir.normalize().mul(60);
+                // vDir = vDir.add(cc.v2(this.node.x, this.node.y));
+                let sequence = cc.sequence(cc.delayTime(0.2), cc.moveBy(0.4, vDir), cc.delayTime(0.1)
+                , cc.scaleTo(0.3, 0), cc.callFunc(function(){
                         this.node.destroy();
                 },this));
                 actionArray.push(sequence);
+            }
+            else {
+                cc.log("666666666", cmd[i].action);
             }
 
             curTime = cmd[i].playTime + cmd[i].keepTime;
