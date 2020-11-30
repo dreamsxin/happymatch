@@ -305,12 +305,23 @@ export default class GameModel {
                     }
                 }
                 this.createNewCell(pos, newCellStatus, newCellType);
-
             }
 
-            if (birdModel) {
-                bombModels.splice(bombModels.indexOf(birdModel), 1);
-            }
+            // let repeatCount = 0;
+            // let repeatIndex = -1;
+            // for (let index = 0; index < bombModels.length; index++) {
+            //     if (bombModels[index].status == CELL_STATUS.BIRD) {
+            //         repeatCount++;
+            //         repeatIndex = index;
+            //     }
+            // }
+            // if (repeatCount > 1) {
+            //     bombModels.splice(repeatIndex, 1);
+            //     cc.log("11111111111", (new Date).getTime());
+            // }
+            // if (-1 <= bombModels.indexOf(birdModel)) {
+            //     cc.log("2222222222", (new Date).getTime());                
+            // }
             this.processBomb(bombModels, cycleCount);
 
             this.curTime += ANITIME.DIE;
@@ -464,10 +475,7 @@ export default class GameModel {
                     this.addColBomb(this.curTime, cc.v2(model.x, model.y));
                 }
                 else if (model.status == CELL_STATUS.WRAP) {
-                    if (bombTime < ANITIME.WARAP_TOTAL) {
-                        bombTime = ANITIME.WARAP_TOTAL;
-                    }
-
+                    let isCrush = false;
                     let x = model.x;
                     let y = model.y;
                     for (let i = 1; i <= GRID_HEIGHT; i++) {
@@ -478,19 +486,24 @@ export default class GameModel {
                                     newBombModel.push(this.cells[i][j]);
                                 }
                                 this.crushWrapCell(j, i, cc.v2(x, y), delta);
+                                isCrush = true;
                             }
                         }
                     }
-                    this.addWrapBomb(this.curTime, cc.v2(x, y));
+                    
+                    if (isCrush) {
+                        if (bombTime < ANITIME.WARAP_TOTAL) {
+                            bombTime = ANITIME.WARAP_TOTAL;
+                        }
+                        this.addWrapBomb(this.curTime, cc.v2(x, y));
+                    }
                 }
                 else if (model.status == CELL_STATUS.BIRD) {
                     let crushType = model.type
-                    if (bombTime < ANITIME.BOMB_BIRD_DELAY) {
-                        bombTime = ANITIME.BOMB_BIRD_DELAY;
-                    }
                     if (crushType == CELL_TYPE.BIRD) {
                         crushType = this.getRandomCellType();
                     }
+                    let isCrush = false;
                     let vCenter = cc.v2(model.x, model.y);
                     for (let i = 1; i <= GRID_HEIGHT; i++) {
                         for (let j = 1; j <= GRID_WIDTH; j++) {
@@ -499,11 +512,17 @@ export default class GameModel {
                                     newBombModel.push(this.cells[i][j]);
                                 }
                                 this.crushBirdCell(j, i, vCenter);
+                                isCrush = true;
                             }
                         }
                     }
                     //this.crushCell(model.x, model.y);
-                    this.addBirdBomb(this.curTime, vCenter);
+                    if (isCrush) {
+                        if (bombTime < ANITIME.BOMB_BIRD_DELAY) {
+                            bombTime = ANITIME.BOMB_BIRD_DELAY;
+                        }
+                        this.addBirdBomb(this.curTime, vCenter);
+                    }
                 }
             }, this);
             if (bombModels.length > 0) {

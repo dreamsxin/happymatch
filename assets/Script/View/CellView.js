@@ -138,7 +138,7 @@ cc.Class({
                     this.attractRadius = this.vDir.mag();
                     this.attractRotate = 0;
                     //总时间减去 动画前后空白的时间
-                    this.attractSpeed = this.attractRadius/(ANITIME.BOMB_BIRD_DELAY-startTime-(ANITIME.BOMB_BIRD_DELAY-3.5)-0.3);
+                    this.attractSpeed = this.attractRadius/(ANITIME.BOMB_BIRD_DELAY-startTime-(ANITIME.BOMB_BIRD_DELAY-3.5)-0.4);
                     this.attractSpeed1 = 0;
                     this.schedule(this.updateRotate, 0);
                     this.node.runAction(cc.repeatForever(cc.rotateBy(1, -360)));
