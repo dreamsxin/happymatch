@@ -269,6 +269,7 @@ export default class GameModel {
         let cycleCount = 0;
         while (checkPoint.length > 0) {
             let bombModels = [];
+            let birdModel = null;
             if (cycleCount == 0 && checkPoint.length == 2) { //特殊消除
                 let pos1 = checkPoint[0];
                 let pos2 = checkPoint[1];
@@ -283,7 +284,7 @@ export default class GameModel {
                         model2.type = model1.type;
                         bombModels.push(model2);
                     }
-
+                    birdModel = bombModels[0];
                 }
             }
             for (var i in checkPoint) {
@@ -306,7 +307,12 @@ export default class GameModel {
                 this.createNewCell(pos, newCellStatus, newCellType);
 
             }
+
+            if (birdModel) {
+                bombModels.splice(bombModels.indexOf(birdModel), 1);
+            }
             this.processBomb(bombModels, cycleCount);
+
             this.curTime += ANITIME.DIE;
             checkPoint = this.down();
             cycleCount++;
