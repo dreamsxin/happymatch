@@ -14,6 +14,15 @@ export default class CellModel {
 
     init(type) {
         this.type = type;
+        if (type == g_obstacle.stone) {
+            this.setStatus(CELL_STATUS.STATIC);
+        }
+        else if (type == g_obstacle.box) {
+            this.setStatus(CELL_STATUS.DYNAMIC);
+        }
+        else if (type == g_obstacle.ice) {
+            this.setStatus(CELL_STATUS.ICE);
+        }
     }
 
     isEmpty() {

@@ -58,7 +58,10 @@ export default class GameModel {
                 let point = queue[front];
                 let cellModel = this.cells[point.y][point.x];
                 front++;
-                if (!cellModel) {
+                if (!cellModel 
+                || cellModel.status == CELL_STATUS.STATIC
+                || cellModel.status == CELL_STATUS.DYNAMIC
+                || cellModel.status == CELL_STATUS.ICE) {
                     continue;
                 }
                 for (let i = 0; i < direction.length; i++) {
@@ -84,6 +87,10 @@ export default class GameModel {
         let newCellStatus = "";
         
         //当两只魔力鸟同时交换的时候，就会达到清屏的技能，整个屏幕上的动物都会消失
+        //魔力鸟+1=神奇鸟
+        //两个魔力鸟交换，会清屏。
+        //两个神奇鸟交换，会清屏两次。
+        //一个神奇鸟和一个魔力鸟交换，魔力鸟会清屏，神奇鸟会随机清除屏幕上的两种小动物
 
         if (rowResult.length >= 5 || colResult.length >= 5) {
             //任意五个'同行'且相同的动物可以合成一个'魔力鸟'特效
@@ -210,7 +217,7 @@ export default class GameModel {
         this.changeModels = [];// 发生改变的model，将作为返回值，给view播动作
         this.effectsQueue = []; // 动物消失，爆炸等特效
         var lastPos = this.lastPos;
-        if (!this.lastPos || this.lastPos.equals(cc.v2(-1, -1))) {
+        if (!lastPos || lastPos.equals(pos) || lastPos.equals(cc.v2(-1, -1))) {
             this.lastPos = pos;
             return [[], []];
         }
@@ -377,7 +384,6 @@ export default class GameModel {
                         this.changeModels.push(this.cells[k][j]);
                         newCheckPoint.push(this.cells[k][j]);
                     }
-
                 }
             }
         }
@@ -421,8 +427,13 @@ export default class GameModel {
         for (let i = 1; i <= CELL_BASENUM; i++) {
             this.cellCreateType.push(i);
         }
+
+        for (let key in g_obstacle) {
+            this.cellCreateType.push(g_obstacle[key]);
+        }
+
         for (let i = 0; i < this.cellCreateType.length; i++) {
-            let index = MATH_FLOOR(MATH_RONDOM() * CELL_BASENUM);
+            let index = MATH_FLOOR(MATH_RONDOM() * this.cellCreateType.length);
             let value = this.cellCreateType[i];
             this.cellCreateType[i] = this.cellCreateType[index];
             this.cellCreateType[index] = value;
@@ -431,6 +442,7 @@ export default class GameModel {
     // 随要生成一个类型
     getRandomCellType() {
         var index = MATH_FLOOR(MATH_RONDOM() * this.cellTypeNum);
+        // let index = MATH_FLOOR(MATH_RONDOM() * this.cellCreateType.length);
         return this.cellCreateType[index];
     }
     // TODO bombModels去重

@@ -32,11 +32,13 @@ cc.Class({
         this.node.x = CELL_WIDTH * (x - 0.5);
         this.node.y = CELL_HEIGHT * (y - 0.5);
         var animation  = this.node.getComponent(cc.Animation);
-        if (model.status == CELL_STATUS.COMMON){
-            animation.stop();
-        } 
-        else{
-            animation.play(model.status);
+        if (animation) {
+            if (model.status == CELL_STATUS.COMMON){
+                animation.stop();
+            } 
+            else{
+                animation.play(model.status);
+            }
         }
     },
     // 执行移动动作
@@ -168,8 +170,12 @@ cc.Class({
 
     // },
     setSelect: function(flag){
-        var animation = this.node.getComponent(cc.Animation);
         var bg = this.node.getChildByName("select");
+        if (!bg) {
+            return;
+        }
+
+        var animation = this.node.getComponent(cc.Animation);
         if(flag == false && this.isSelect && this.model.status == CELL_STATUS.COMMON){
             animation.stop();
             this.node.getComponent(cc.Sprite).spriteFrame = this.defaultFrame;

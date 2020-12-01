@@ -9,6 +9,14 @@ export const CELL_TYPE = {
     F : 6,
     BIRD : 7
 }
+
+// window.OBSTACLE_BASENUM = 1;
+window.g_obstacle = {
+    stone: 10,
+    box: 11,
+    ice: 12
+};
+
 export const CELL_BASENUM = 6;
 export const CELL_STATUS = {
     COMMON: 0 ,
@@ -16,7 +24,10 @@ export const CELL_STATUS = {
     LINE: "line",
     COLUMN: "column",
     WRAP: "wrap",
-    BIRD: "bird"
+    BIRD: "bird",
+    STATIC: 1,
+    DYNAMIC: 2,
+    ICE:3
 }
 
 export const GRID_WIDTH = 9;

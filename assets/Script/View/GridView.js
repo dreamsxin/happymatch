@@ -30,7 +30,8 @@ cc.Class({
         },
         itemsScrollview:cc.ScrollView,
         scoreLabel:cc.Label,
-        stepsLabel:cc.Label
+        stepsLabel:cc.Label,
+        obstaclePre:[cc.Prefab]
     },
 
 
@@ -62,7 +63,7 @@ cc.Class({
             this.cellViews[i] = [];
             for(var j = 1;j<=GRID_HEIGHT;j++){
                 var type = cellsModels[i][j].type;
-                var aniView = cc.instantiate(this.aniPre[type]);
+                var aniView = cc.instantiate(this.aniPre[type] ? this.aniPre[type] : this.obstaclePre[type]);
                 aniView.parent = this.node;
                 aniView.type = type;
                 var cellViewScript = aniView.getComponent("CellView");
@@ -84,13 +85,15 @@ cc.Class({
 
             this.tips();
 
-            var touchPos = eventTouch.getLocation();
-            var cellPos = this.convertTouchPosToCell(touchPos);
-            if(cellPos){
+            var cellPos = this.convertTouchPosToCell(eventTouch.getLocation());
+            if(cellPos) {
                 if (this.itemsScrollview.isChange) {
                     this.isCanMove = false;
                     this.changeSelectCell(cellPos);
                 }
+                // else if (this.itemsScrollview.isForce) {
+                //     this.forceSelectCell(cellPos);
+                // }
                 else {
                     var changeModels = this.selectCell(cellPos);
                     this.isCanMove = changeModels.length < 3;
@@ -111,10 +114,11 @@ cc.Class({
             if (this.itemsScrollview.isMagic) {
                 this.stopTipsActions();
 
-                var startTouchPos = eventTouch.getStartLocation ();
-                var startCellPos = this.convertTouchPosToCell(startTouchPos);
-                var touchPos = eventTouch.getLocation();
-                var cellPos = this.convertTouchPosToCell(touchPos);
+                var startCellPos = this.convertTouchPosToCell(eventTouch.getStartLocation());
+                var cellPos = this.convertTouchPosToCell(eventTouch.getLocation());
+                if (!this.isCell(cellPos) || !this.isCell(startCellPos)) {
+                    return true;
+                }
                 if(startCellPos.x != cellPos.x || startCellPos.y != cellPos.y){
                     let cellView = this.gameModel.getCells()[startCellPos.y][startCellPos.x];
                     if (cellView.getStatus() == CELL_STATUS.COMMON) {
@@ -132,18 +136,16 @@ cc.Class({
             else if(this.isCanMove) {
                 this.stopTipsActions();
 
-                var startTouchPos = eventTouch.getStartLocation ();
-                var startCellPos = this.convertTouchPosToCell(startTouchPos);
-                var touchPos = eventTouch.getLocation();
-                var cellPos = this.convertTouchPosToCell(touchPos);
+                var startCellPos = this.convertTouchPosToCell(eventTouch.getStartLocation());
+                var cellPos = this.convertTouchPosToCell(eventTouch.getLocation());
                 if(startCellPos.x != cellPos.x || startCellPos.y != cellPos.y){
                     this.isCanMove = false;
-                    if (this.itemsScrollview.isForce) {
-                        this.forceSelectCell(cellPos);
-                    }
-                    else {
+                    // if (this.itemsScrollview.isForce) {
+                    //     this.forceSelectCell(cellPos);
+                    // }
+                    // else {
                         this.selectCell(cellPos);
-                    }
+                    // }
                 }
            }
         }, this);
@@ -174,7 +176,7 @@ cc.Class({
             // 如果原来的cell不存在，则新建
             if(!viewInfo){
                 var type = model.type;
-                var aniView = cc.instantiate(this.aniPre[type]);
+                var aniView = cc.instantiate(this.aniPre[type] ? this.aniPre[type] : this.obstaclePre[type]);
                 aniView.parent = this.node;
                 aniView.type = type;
                 var cellViewScript = aniView.getComponent("CellView");
@@ -291,6 +293,10 @@ cc.Class({
     },
     // 正常击中格子后的操作
     selectCell: function(cellPos) {
+        if (!this.isCell(cellPos)) {
+            return [];
+        }
+        
         var result = [[], []];
         if (this.itemsScrollview.isHammer) {
             result = this.gameModel.hammerSelectCell(cellPos);  
@@ -300,6 +306,9 @@ cc.Class({
         }
         else if (this.itemsScrollview.isColumn) {
             result = this.gameModel.rocketSelectCell(cellPos, CELL_STATUS.COLUMN);
+        }
+        else if (this.itemsScrollview.isForce) {
+            result = this.gameModel.forceSelectCell(cellPos);
         }
         else {
             result = this.gameModel.selectCell(cellPos); // 直接先丢给model处理数据逻辑
@@ -332,10 +341,18 @@ cc.Class({
             this.itemsScrollview.isColumn= false;
             this.itemsScrollview.setColumn(this.itemsScrollview.getColumn()-1);
         }
+        else if (changeModels.length > 0 && this.itemsScrollview.isForce) {
+            this.itemsScrollview.isForce = false;
+            this.itemsScrollview.setForce(this.itemsScrollview.getForce()-1);    
+        }
     
         return changeModels;
     },
     changeSelectCell: function(cellPos) {
+        if (!this.isCell(cellPos)) {
+            return [];
+        }
+
         var result = this.gameModel.changeSelectCell(cellPos);
          
         var changeModels = result[0]; // 有改变的cell，包含新生成的cell和生成马上摧毁的格子
@@ -360,29 +377,33 @@ cc.Class({
 
         return changeModels;
     },
-    forceSelectCell: function(cellPos) {
-        var result = this.gameModel.forceSelectCell(cellPos);
+    // forceSelectCell: function(cellPos) {
+    //     if (!this.isCell(cellPos)) {
+    //         return [];
+    //     }
+        
+    //     var result = this.gameModel.forceSelectCell(cellPos);
          
-        var changeModels = result[0]; // 有改变的cell，包含新生成的cell和生成马上摧毁的格子
-        var effectsQueue = result[1]; //各种特效
-        this.playDragonBones(effectsQueue);
-        this.disableTouch(this.getPlayAniTime(changeModels), this.getStep(effectsQueue));
-        this.updateView(changeModels);
-        this.gameModel.cleanCmd(); 
-        if(changeModels.length >= 2){
-            this.updateSelect(cc.v2(-1,-1));
-            this.audioUtils.playSwap();
-        }
-        else {
-            this.updateSelect(cellPos);
-            this.audioUtils.playClick();
-        }
+    //     var changeModels = result[0]; // 有改变的cell，包含新生成的cell和生成马上摧毁的格子
+    //     var effectsQueue = result[1]; //各种特效
+    //     this.playDragonBones(effectsQueue);
+    //     this.disableTouch(this.getPlayAniTime(changeModels), this.getStep(effectsQueue));
+    //     this.updateView(changeModels);
+    //     this.gameModel.cleanCmd(); 
+    //     if(changeModels.length >= 2){
+    //         this.updateSelect(cc.v2(-1,-1));
+    //         this.audioUtils.playSwap();
+    //     }
+    //     else {
+    //         this.updateSelect(cellPos);
+    //         this.audioUtils.playClick();
+    //     }
 
-        this.itemsScrollview.isForce = false;
-        this.itemsScrollview.setForce(this.itemsScrollview.getForce()-1);
+    //     this.itemsScrollview.isForce = false;
+    //     this.itemsScrollview.setForce(this.itemsScrollview.getForce()-1);
 
-        return changeModels;
-    },
+    //     return changeModels;
+    // },
     playEffect: function(effectsQueue){
         this.effectLayer.playEffects(effectsQueue);
     },
@@ -442,9 +463,24 @@ cc.Class({
             this.gameModel.addSteps(cc.v2(486.39, 713.858), this);
             this.playEffect(this.gameModel.effectsQueue);
             this.isInPlayAni = true;
-            this.updateSelect(cc.v2(-1,-1)); }
+            this.updateSelect(cc.v2(-1,-1)); 
+        }
         else {
             cc.log("当前步数不低于6");
         }
+    },
+    isCell(pos) {
+        cc.log("555555555555555", pos.y, pos.x);
+        if (!this.gameModel.getCells()[pos.y]) {
+            return true;
+        }
+
+        let cell = this.gameModel.getCells()[pos.y][pos.x];
+        if (!cell) {
+            return true;
+        }
+
+        let isNoCell = (cell.status == CELL_STATUS.STATIC || cell.status == CELL_STATUS.ICE);
+        return !isNoCell;
     }
 });

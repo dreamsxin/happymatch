@@ -17,7 +17,7 @@
         "__id__": 2
       },
       {
-        "__id__": 115
+        "__id__": 112
       }
     ],
     "_active": false,
@@ -88,10 +88,10 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 113
+        "__id__": 110
       },
       {
-        "__id__": 114
+        "__id__": 111
       }
     ],
     "_prefab": null,
@@ -182,7 +182,7 @@
       "array": [
         0,
         0,
-        494.5005055609145,
+        493.63448015713004,
         0,
         0,
         0,
@@ -273,18 +273,15 @@
       },
       {
         "__id__": 22
-      },
-      {
-        "__id__": 108
       }
     ],
     "_active": true,
     "_components": [
       {
-        "__id__": 111
+        "__id__": 108
       },
       {
-        "__id__": 112
+        "__id__": 109
       }
     ],
     "_prefab": null,
@@ -1117,6 +1114,27 @@
     "stepsLabel": {
       "__id__": 13
     },
+    "obstaclePre": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "__uuid__": "1e152023-8dc0-434f-898b-16b5c2896e95"
+      },
+      {
+        "__uuid__": "f89dee03-5b42-4563-a71e-d2d60cc81c89"
+      },
+      {
+        "__uuid__": "04331afc-8132-4333-bc84-610a711a19cd"
+      }
+    ],
     "_id": "8eNT6iVu5HgIkNF7dZE+iL"
   },
   {
@@ -5142,121 +5160,6 @@
     "_id": "0cEHYnOu5HD6bbRuOmNLm8"
   },
   {
-    "__type__": "cc.Node",
-    "_name": "birdBomb",
-    "_objFlags": 0,
-    "_parent": {
-      "__id__": 5
-    },
-    "_children": [],
-    "_active": false,
-    "_components": [
-      {
-        "__id__": 109
-      }
-    ],
-    "_prefab": {
-      "__id__": 110
-    },
-    "_opacity": 255,
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
-    },
-    "_contentSize": {
-      "__type__": "cc.Size",
-      "width": 0,
-      "height": 0
-    },
-    "_anchorPoint": {
-      "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
-    },
-    "_trs": {
-      "__type__": "TypedArray",
-      "ctor": "Float64Array",
-      "array": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1
-      ]
-    },
-    "_eulerAngles": {
-      "__type__": "cc.Vec3",
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "_skewX": 0,
-    "_skewY": 0,
-    "_is3DNode": false,
-    "_groupIndex": 0,
-    "groupIndex": 0,
-    "_id": "a8vB7leNFG56adSaXBKTLb"
-  },
-  {
-    "__type__": "dragonBones.ArmatureDisplay",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 108
-    },
-    "_enabled": true,
-    "_materials": [
-      {
-        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
-      }
-    ],
-    "_armatureName": "moliniao",
-    "_animationName": "ani1",
-    "_preCacheMode": 0,
-    "_cacheMode": 0,
-    "playTimes": 1,
-    "premultipliedAlpha": false,
-    "_armatureKey": "4a7a33e0-6b49-44db-8322-df31f15e7388#9fa62903-0f2f-4724-bf31-e69d2a3cd5aa",
-    "_accTime": 0,
-    "_playCount": 0,
-    "_frameCache": null,
-    "_curFrame": null,
-    "_playing": false,
-    "_armatureCache": null,
-    "_N$dragonAsset": {
-      "__uuid__": "4a7a33e0-6b49-44db-8322-df31f15e7388"
-    },
-    "_N$dragonAtlasAsset": {
-      "__uuid__": "9fa62903-0f2f-4724-bf31-e69d2a3cd5aa"
-    },
-    "_N$_defaultArmatureIndex": 0,
-    "_N$_animationIndex": 1,
-    "_N$_defaultCacheMode": 0,
-    "_N$timeScale": 1,
-    "_N$debugBones": false,
-    "_N$enableBatch": false,
-    "_id": "27CkNsH2BDcbhUh1q3sgyo"
-  },
-  {
-    "__type__": "cc.PrefabInfo",
-    "root": {
-      "__id__": 108
-    },
-    "asset": {
-      "__uuid__": "79fab5ed-5fe9-4c89-b3f1-0f626b907c72"
-    },
-    "fileId": "",
-    "sync": false
-  },
-  {
     "__type__": "5ac64Iq16lBqrHZ0246FRcZ",
     "_name": "",
     "_objFlags": 0,
@@ -5343,7 +5246,7 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 116
+        "__id__": 113
       }
     ],
     "_prefab": null,
@@ -5400,7 +5303,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 115
+      "__id__": 112
     },
     "_enabled": true,
     "_id": "bdVxVhx/VB5I5+jqNqR2wI"
