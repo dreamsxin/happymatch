@@ -307,21 +307,6 @@ export default class GameModel {
                 this.createNewCell(pos, newCellStatus, newCellType);
             }
 
-            // let repeatCount = 0;
-            // let repeatIndex = -1;
-            // for (let index = 0; index < bombModels.length; index++) {
-            //     if (bombModels[index].status == CELL_STATUS.BIRD) {
-            //         repeatCount++;
-            //         repeatIndex = index;
-            //     }
-            // }
-            // if (repeatCount > 1) {
-            //     bombModels.splice(repeatIndex, 1);
-            //     cc.log("11111111111", (new Date).getTime());
-            // }
-            // if (-1 <= bombModels.indexOf(birdModel)) {
-            //     cc.log("2222222222", (new Date).getTime());                
-            // }
             this.processBomb(bombModels, cycleCount);
 
             this.curTime += ANITIME.DIE;
@@ -432,13 +417,15 @@ export default class GameModel {
         cc.log("num = ", num);
         this.cellTypeNum = num;
         this.cellCreateType = [];
-        let createTypeList = this.cellCreateType;
+        // let createTypeList = this.cellCreateType;
         for (let i = 1; i <= CELL_BASENUM; i++) {
-            createTypeList.push(i);
+            this.cellCreateType.push(i);
         }
-        for (let i = 0; i < createTypeList.length; i++) {
-            let index = MATH_FLOOR(MATH_RONDOM() * (CELL_BASENUM - i)) + i;
-            createTypeList[i], createTypeList[index] = createTypeList[index], createTypeList[i]
+        for (let i = 0; i < this.cellCreateType.length; i++) {
+            let index = MATH_FLOOR(MATH_RONDOM() * CELL_BASENUM);
+            let value = this.cellCreateType[i];
+            this.cellCreateType[i] = this.cellCreateType[index];
+            this.cellCreateType[index] = value;
         }
     }
     // 随要生成一个类型
