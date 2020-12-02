@@ -495,6 +495,9 @@ export default class GameModel {
             bombModels.forEach(function (model) {
                 if (model.status == CELL_STATUS.LINE) {
                     for (let i = 1; i <= GRID_WIDTH; i++) {
+                        if (!this.isStaticCell(cc.v2(i, model.y))) {
+                            continue;
+                        }
                         if (this.cells[model.y][i]) {
                             if (this.cells[model.y][i].status != CELL_STATUS.COMMON) {
                                 newBombModel.push(this.cells[model.y][i]);
@@ -506,6 +509,9 @@ export default class GameModel {
                 }
                 else if (model.status == CELL_STATUS.COLUMN) {
                     for (let i = 1; i <= GRID_HEIGHT; i++) {
+                        if (!this.isStaticCell(cc.v2(model.x, i))) {
+                            continue;
+                        }
                         if (this.cells[i][model.x]) {
                             if (this.cells[i][model.x].status != CELL_STATUS.COMMON) {
                                 newBombModel.push(this.cells[i][model.x]);
@@ -520,7 +526,10 @@ export default class GameModel {
                     let x = model.x;
                     let y = model.y;
                     for (let i = 1; i <= GRID_HEIGHT; i++) {
-                        for (let j = 1; j <= GRID_WIDTH; j++) {
+                        for (let j = 1; j <= GRID_WIDTH; j++) {    
+                            if (!this.isStaticCell(cc.v2(i, j))) {
+                                continue;
+                            }
                             let delta = Math.abs(x - j) + Math.abs(y - i);
                             if (this.cells[i][j] && delta <= 2) {
                                 if (this.cells[i][j].status != CELL_STATUS.COMMON) {
@@ -547,7 +556,10 @@ export default class GameModel {
                     let isCrush = false;
                     let vCenter = cc.v2(model.x, model.y);
                     for (let i = 1; i <= GRID_HEIGHT; i++) {
-                        for (let j = 1; j <= GRID_WIDTH; j++) {
+                        for (let j = 1; j <= GRID_WIDTH; j++) {   
+                            if (!this.isStaticCell(cc.v2(i, j))) {
+                                continue;
+                            }
                             if (this.cells[i][j] && this.cells[i][j].type == crushType) {
                                 if (this.cells[i][j].status != CELL_STATUS.COMMON) {
                                     newBombModel.push(this.cells[i][j]);
@@ -945,6 +957,20 @@ export default class GameModel {
         }
 
         let isNoCell = (cell.status == CELL_STATUS.STATIC || cell.status == CELL_STATUS.ICE);
+        return !isNoCell;
+    }
+    isStaticCell(pos) {
+        cc.log("555555555555555", pos.y, pos.x);
+        if (!this.cells[pos.y]) {
+            return true;
+        }
+
+        let cell = this.cells[pos.y][pos.x];
+        if (!cell) {
+            return true;
+        }
+
+        let isNoCell = (cell.status == CELL_STATUS.STATIC);
         return !isNoCell;
     }
 }

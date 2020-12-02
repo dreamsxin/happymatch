@@ -292,25 +292,36 @@ cc.Class({
         }, this)));
     },
     // 正常击中格子后的操作
-    selectCell: function(cellPos) {
-        if (!this.isCell(cellPos)) {
-            return [];
-        }
-        
+    selectCell: function(cellPos) {        
         var result = [[], []];
         if (this.itemsScrollview.isHammer) {
+            if (!this.gameModel.isStaticCell(cellPos)) {
+                return [];
+            }
             result = this.gameModel.hammerSelectCell(cellPos);  
         }
         else if (this.itemsScrollview.isLine) {
+            if (!this.gameModel.isStaticCell(cellPos)) {
+                return [];
+            }
             result = this.gameModel.rocketSelectCell(cellPos, CELL_STATUS.LINE);
         }
         else if (this.itemsScrollview.isColumn) {
+            if (!this.gameModel.isStaticCell(cellPos)) {
+                return [];
+            }
             result = this.gameModel.rocketSelectCell(cellPos, CELL_STATUS.COLUMN);
         }
         else if (this.itemsScrollview.isForce) {
+            if (!this.isCell(cellPos)) {
+                return [];
+            }
             result = this.gameModel.forceSelectCell(cellPos);
         }
         else {
+            if (!this.isCell(cellPos)) {
+                return [];
+            }
             result = this.gameModel.selectCell(cellPos); // 直接先丢给model处理数据逻辑
         }
          
