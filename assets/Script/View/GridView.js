@@ -470,17 +470,6 @@ cc.Class({
         }
     },
     isCell(pos) {
-        cc.log("555555555555555", pos.y, pos.x);
-        if (!this.gameModel.getCells()[pos.y]) {
-            return true;
-        }
-
-        let cell = this.gameModel.getCells()[pos.y][pos.x];
-        if (!cell) {
-            return true;
-        }
-
-        let isNoCell = (cell.status == CELL_STATUS.STATIC || cell.status == CELL_STATUS.ICE);
-        return !isNoCell;
+        return this.gameModel.isCell(pos);
     }
 });

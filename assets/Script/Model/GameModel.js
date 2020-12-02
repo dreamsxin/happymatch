@@ -28,7 +28,7 @@ export default class GameModel {
                 let flag = true;
                 while (flag) {
                     flag = false;
-                    this.cells[i][j].init(this.getRandomCellType());
+                    this.cells[i][j].init(this.getRandomAllType());
                     let result = this.checkPoint(j, i)[0];
                     if (result.length > 2) {
                         flag = true;
@@ -374,6 +374,10 @@ export default class GameModel {
                 if (this.cells[i][j] == null) {
                     var curRow = i;
                     for (var k = curRow; k <= GRID_HEIGHT; k++) {
+                        if (!this.isCell(cc.v2(j, k))) {
+                            break;
+                        }
+
                         if (this.cells[k][j]) {
                             this.pushToChangeModels(this.cells[k][j]);
                             newCheckPoint.push(this.cells[k][j]);
@@ -386,6 +390,9 @@ export default class GameModel {
                     }
                     var count = 1;
                     for (var k = curRow; k <= GRID_HEIGHT; k++) {
+                        if (!this.isCell(cc.v2(j, k))) {
+                            break;
+                        }
                         this.cells[k][j] = new CellModel();
                         this.cells[k][j].init(this.getRandomCellType());
                         this.cells[k][j].setStartXY(j, count + GRID_HEIGHT);
@@ -434,13 +441,8 @@ export default class GameModel {
         cc.log("num = ", num);
         this.cellTypeNum = num;
         this.cellCreateType = [];
-        // let createTypeList = this.cellCreateType;
         for (let i = 1; i <= CELL_BASENUM; i++) {
             this.cellCreateType.push(i);
-        }
-
-        for (let key in g_obstacle) {
-            this.cellCreateType.push(g_obstacle[key]);
         }
 
         for (let i = 0; i < this.cellCreateType.length; i++) {
@@ -449,12 +451,41 @@ export default class GameModel {
             this.cellCreateType[i] = this.cellCreateType[index];
             this.cellCreateType[index] = value;
         }
+
+        let obstalce = [];
+        for (let key in g_obstacle) {
+            obstalce.push(g_obstacle[key]);
+        }
+        for (let i = 0; i < obstalce.length; i++) {
+            let index = MATH_FLOOR(MATH_RONDOM() * obstalce.length);
+            let value = obstalce[i];
+            obstalce[i] = obstalce[index];
+            obstalce[index] = value;
+        }
+
+        this.allCreateType = [];
+        for (let i of this.cellCreateType) {
+            this.allCreateType.push(i);
+        }
+        for (let i of obstalce) {
+            this.allCreateType.push(i);
+        }
+        for (let i = 0; i < this.allCreateType.length; i++) {
+            let index = MATH_FLOOR(MATH_RONDOM() * this.allCreateType.length);
+            let value = this.allCreateType[i];
+            this.allCreateType[i] = this.allCreateType[index];
+            this.allCreateType[index] = value;
+        }
     }
     // 随要生成一个类型
     getRandomCellType() {
         var index = MATH_FLOOR(MATH_RONDOM() * this.cellTypeNum);
         // let index = MATH_FLOOR(MATH_RONDOM() * this.cellCreateType.length);
         return this.cellCreateType[index];
+    }
+    getRandomAllType() {
+        var index = MATH_FLOOR(MATH_RONDOM() * this.allCreateType.length);
+        return this.allCreateType[index];
     }
     // TODO bombModels去重
     processBomb(bombModels, cycleCount) {
@@ -672,12 +703,44 @@ export default class GameModel {
         return [this.changeModels, this.effectsQueue];
     }
 
+    // refreshSort(i, x, start) {
+    //     let curClickCell = null;
+    //     let lastClickCell = null;
+    //     let lastPos = null;
+    //     let pos = null;
+    //     for(let j = start; j <= GRID_HEIGHT; j++) {
+    //         lastPos = cc.v2(i, j);
+
+    //         while (true) {
+    //             let y = MATH_FLOOR(MATH_RONDOM() * (GRID_HEIGHT - j))+1;
+    //             pos = cc.v2(x, y);
+    //             this.exchangeCell(lastPos, pos);
+    //             if (((this.checkPoint(i, j)[0]).length > 2 || (this.checkPoint(x, y)[0]).length > 2)) {
+    //                 this.exchangeCell(lastPos, pos);
+    //                 continue;
+    //             }
+    //             curClickCell = this.cells[pos.y][pos.x];
+    //             lastClickCell = this.cells[lastPos.y][lastPos.x];
+    //             break;
+    //         }
+
+    //         this.pushToChangeModels(curClickCell);
+    //         this.pushToChangeModels(lastClickCell);
+
+    //         curClickCell.moveTo(lastPos, this.curTime);
+    //         lastClickCell.moveTo(pos, this.curTime);
+    //     }
+    // }
     refreshSort(i, x, start) {
         for(let j = start; j <= GRID_HEIGHT; j++) {
             let y = MATH_FLOOR(MATH_RONDOM() * (GRID_HEIGHT - j))+1;
 
             let lastPos = cc.v2(i, j);
             let pos = cc.v2(x, y);
+            if (!this.isCell(lastPos) || !this.isCell(pos)) {
+                // --j;
+                continue;
+            }
 
             let curClickCell = this.cells[pos.y][pos.x];
             let lastClickCell = this.cells[lastPos.y][lastPos.x];
@@ -868,6 +931,21 @@ export default class GameModel {
         }
         
         return [this.changeModels, this.effectsQueue];
+    }
+
+    isCell(pos) {
+        cc.log("555555555555555", pos.y, pos.x);
+        if (!this.cells[pos.y]) {
+            return true;
+        }
+
+        let cell = this.cells[pos.y][pos.x];
+        if (!cell) {
+            return true;
+        }
+
+        let isNoCell = (cell.status == CELL_STATUS.STATIC || cell.status == CELL_STATUS.ICE);
+        return !isNoCell;
     }
 }
 
