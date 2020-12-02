@@ -48,7 +48,7 @@ cc.Class({
             return ;
         }
 
-        this.node.stopActionByTag(ANITIME.TIPS_ACTION_TAG);
+        // this.node.stopActionByTag(ANITIME.TIPS_ACTION_TAG);
     
         var actionArray = [];
         var curTime = 0;
@@ -57,6 +57,7 @@ cc.Class({
                 var delay = cc.delayTime(cmd[i].playTime - curTime);
                 actionArray.push(delay);
             }
+
             if(cmd[i].action == "moveTo"){
                 var x = (cmd[i].pos.x - 0.5) * CELL_WIDTH;
                 var y = (cmd[i].pos.y - 0.5) * CELL_HEIGHT;
@@ -103,7 +104,7 @@ cc.Class({
                 this.toTipsDown(cmd[i].playTime);
             }
             else if (cmd[i].action == "toWrapCenter") {
-                let sequence = cc.sequence(cc.scaleTo(ANITIME.WARAP_TOTAL, 0), cc.callFunc(function(){
+                let sequence = cc.sequence(cc.scaleTo(ANITIME.WRAP_TOTAL, 0), cc.callFunc(function(){
                     this.node.destroy();
                 },this));
                 actionArray.push(sequence);
@@ -147,6 +148,15 @@ cc.Class({
                     this.node.zIndex = 10000;
                 },this));
                 actionArray.push(sequence);
+            }
+            else if (cmd[i].action == "toDrop") {
+                let sequence = cc.sequence(cc.scaleTo(ANITIME.DROP, 0.5), cc.callFunc(function(){
+                    this.node.destroy();
+                }, this));
+                let spawn = cc.spawn(sequence
+                    ,cc.moveBy(ANITIME.DROP, cc.v2(0, -CELL_HEIGHT))
+                    , cc.fadeOut(ANITIME.DROP));
+                actionArray.push(spawn);
             }
             else {
                 cc.log("666666666", cmd[i].action);

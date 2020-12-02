@@ -276,7 +276,6 @@ export default class GameModel {
         let cycleCount = 0;
         while (checkPoint.length > 0) {
             let bombModels = [];
-            let birdModel = null;
             if (cycleCount == 0 && checkPoint.length == 2) { //特殊消除
                 let pos1 = checkPoint[0];
                 let pos2 = checkPoint[1];
@@ -291,7 +290,6 @@ export default class GameModel {
                         model2.type = model1.type;
                         bombModels.push(model2);
                     }
-                    birdModel = bombModels[0];
                 }
             }
             for (var i in checkPoint) {
@@ -318,6 +316,19 @@ export default class GameModel {
 
             this.curTime += ANITIME.DIE;
             checkPoint = this.down();
+            
+            let isBox = false;
+            for (var j = 1; j <= GRID_HEIGHT; j++) {
+                if (this.cells[1][j] && this.cells[1][j].status == CELL_STATUS.DYNAMIC) {
+                    this.crushBoxDrop(j, 1);
+                    isBox = true;
+                    checkPoint.push(cc.v2(1, j));
+                }
+            }
+            if (isBox) {
+                this.curTime += ANITIME.DROP;
+            }
+
             cycleCount++;
         }
     }
@@ -491,8 +502,8 @@ export default class GameModel {
                     }
                     
                     if (isCrush) {
-                        if (bombTime < ANITIME.WARAP_TOTAL) {
-                            bombTime = ANITIME.WARAP_TOTAL;
+                        if (bombTime < ANITIME.WRAP_TOTAL) {
+                            bombTime = ANITIME.WRAP_TOTAL;
                         }
                         this.addWrapBomb(this.curTime, cc.v2(x, y));
                     }
@@ -626,6 +637,13 @@ export default class GameModel {
         model.toShake(this.curTime);
 
         model.toAttract(this.curTime + ANITIME.DIE_SHAKE, vCenter);
+        this.cells[y][x] = null;
+    }
+
+    crushBoxDrop(x, y) {
+        let model = this.cells[y][x];
+        this.pushToChangeModels(model);
+        model.toDrop(this.curTime);
         this.cells[y][x] = null;
     }
 

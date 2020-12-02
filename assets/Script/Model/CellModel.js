@@ -85,6 +85,14 @@ export default class CellModel {
         });
         this.isDeath = true;
     }
+    toDrop(playTime) {
+        this.cmd.push({
+            action: "toDrop",
+            playTime: playTime,
+            keepTime: ANITIME.DROP
+        });
+        this.isDeath = true;
+    }
 
     toShake(playTime) {
         this.cmd.push({
@@ -144,7 +152,7 @@ export default class CellModel {
         this.cmd.push({
             action: "toWrapCenter",
             playTime: playTime,
-            keepTime: ANITIME.WARAP_TOTAL
+            keepTime: ANITIME.WRAP_TOTAL
         });
         this.isDeath = true;
     }
@@ -152,7 +160,7 @@ export default class CellModel {
         this.cmd.push({
             action: "toWrapInside",
             playTime: playTime,
-            keepTime: ANITIME.WARAP_TOTAL,
+            keepTime: ANITIME.WRAP_TOTAL,
             vCenter
         });
         this.isDeath = true;
@@ -162,7 +170,7 @@ export default class CellModel {
         this.cmd.push({
             action: "toWrapOutside",
             playTime: playTime,
-            keepTime: ANITIME.WARAP_TOTAL,
+            keepTime: ANITIME.WRAP_TOTAL,
             vCenter
         });
         this.isDeath = true;

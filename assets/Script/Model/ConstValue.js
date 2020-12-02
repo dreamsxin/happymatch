@@ -50,7 +50,8 @@ export const ANITIME = {
     TIPS:0.4,
     TIPS_ACTION_TAG:10000,
     SHOW:0.2,
-    WARAP_TOTAL:0.7
+    WRAP_TOTAL:0.7,
+    DROP:0.4
 }
 
 window.GAME_SAVE_HANDLER = 'handler_data';
