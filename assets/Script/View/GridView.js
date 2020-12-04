@@ -74,6 +74,50 @@ cc.Class({
 
         this.tips();
     },
+    initWithCellModelsWithServer: function(cellsModels, arrImage) {
+        this.cellViews = [];
+
+        for(var i = 1;i<=GRID_WIDTH;i++) {
+            this.cellViews[i] = [];
+            for(var j = 1;j<=GRID_HEIGHT;j++){
+                var type = cellsModels[i][j].type;
+                var aniView = cc.instantiate(this.aniPre[type] ? this.aniPre[type] : this.obstaclePre[type]);
+                aniView.parent = this.node;
+                aniView.type = type;
+                var cellViewScript = aniView.getComponent("CellView");
+                cellViewScript.initWithModel(cellsModels[i][j]);
+                this.cellViews[i][j] = aniView;
+                
+                let sprite = aniView.getComponent(cc.Sprite);
+                let code = arrImage[cellsModels[i][j].getCode()];
+                if (sprite && code) {
+                    cc.loader.load({url:window.IMAGE_URL+"/"+code, type:"png"}, function(err, texture){
+                        let frame = new cc.SpriteFrame(texture);
+                        sprite.spriteFrame = frame;
+                    })
+                }
+                
+                // let animation  = aniView.getComponent(cc.Animation);
+                // if (animation) {
+                //     if (cellsModels[i][j].getStatus() == CELL_STATUS.LINE) {
+                //         animation.play("effect_line");
+                //     }
+                //     else if(cellsModels[i][j].getStatus() == CELL_STATUS.COLUMN) {
+                //         animation.play("effect_line");
+                //     }
+                // }
+            }
+        }
+
+        this.tips();
+    },
+    setServerBgImage(bgImage) {
+        let self = this;
+        cc.loader.load({url:window.IMAGE_URL+"/"+bgImage, type:"png"}, function(err, texture){
+            let frame = new cc.SpriteFrame(texture);
+            cc.find("Canvas/GameScene/MainBackground").getComponent(cc.Sprite).spriteFrame = frame;
+        })
+    },
     setListener: function(){
         this.node.on(cc.Node.EventType.TOUCH_START, function(eventTouch){
             if(this.isInPlayAni || this.itemsScrollview.isMagic){//播放动画中，不允许点击

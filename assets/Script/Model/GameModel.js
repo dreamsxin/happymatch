@@ -42,8 +42,45 @@ export default class GameModel {
         this.setCellsCopy();
     }
 
-    initWithData(data) {
-        // to do
+    initServerCells(cellTypeNum, arrMap) {
+        this.cells = [];
+        this.setCellTypeNum(cellTypeNum || this.cellTypeNum);
+
+        this.arrMap = arrMap;
+
+        for (var i = 1; i <= GRID_WIDTH; i++) {
+            this.cells[i] = [];
+            for (var j = 1; j <= GRID_HEIGHT; j++) {
+                this.cells[i][j] = new CellModel();
+                this.cells[i][j].setCode(this.arrMap[j-1][i-1].code);
+                let data = this.getServerTypeAndStatus(this.arrMap[j-1][i-1].code);
+                this.cells[i][j].setStatus(data[1]);
+                this.cells[i][j].init(data[0]);
+                this.cells[i][j].setXY(j, i);
+                this.cells[i][j].setStartXY(j, i);
+            }
+        }
+
+        this.setCellsCopy();
+    }
+
+    getServerTypeAndStatus(code) {
+        let strCode = code.toString().split('');
+        if (code == 1000) {//特效鸟
+            return [CELL_TYPE.BIRD, CELL_STATUS.BIRD];
+        }
+        else if (strCode[0] == 1) {//动物
+            let status = [CELL_STATUS.COMMON, CELL_STATUS.LINE, CELL_STATUS.COLUMN,CELL_STATUS.WRAP];
+            return [Number(strCode[1]+strCode[2]), status[strCode[3]]];
+        }
+        else if (strCode[0] == 2) {//非动物
+            let type = [null,g_obstacle.ice,g_obstacle.ice,g_obstacle.box,g_obstacle.stone];
+            let status = [null,CELL_STATUS.ICE,CELL_STATUS.ICE,CELL_STATUS.DYNAMIC,CELL_STATUS.STATIC];
+            return [type[strCode[2]], status[strCode[2]]];
+        }
+        else if (code == 0) {//空, 墙壁
+            return [g_obstacle.stone, CELL_STATUS.STATIC];
+        }
     }
 
     checkPoint(x, y) {
@@ -316,6 +353,8 @@ export default class GameModel {
 
             this.curTime += ANITIME.DIE;
             checkPoint = this.down();
+
+            //this.crushIce(j, curRow, cycleCount);
             
             let isBox = false;
             for (var j = 1; j <= GRID_HEIGHT; j++) {
@@ -385,6 +424,8 @@ export default class GameModel {
                             this.cells[k][j] = null;
                             this.cells[curRow][j].setXY(j, curRow);
                             this.cells[curRow][j].moveTo(cc.v2(j, curRow), this.curTime);
+
+                            // this.crushIce(j, curRow, 0);
                             curRow++;
                         }
                     }
@@ -398,6 +439,8 @@ export default class GameModel {
                         this.cells[k][j].setStartXY(j, count + GRID_HEIGHT);
                         this.cells[k][j].setXY(j, count + GRID_HEIGHT);
                         this.cells[k][j].moveTo(cc.v2(j, k), this.curTime);
+
+                        // this.crushIce(j, k, 0);
                         count++;
                         this.changeModels.push(this.cells[k][j]);
                         newCheckPoint.push(this.cells[k][j]);
@@ -690,6 +733,28 @@ export default class GameModel {
         this.cells[y][x] = null;
     }
 
+    crushIce(x, y, step) {
+        let dirs = [cc.v2(-1, 0), cc.v2(1, 0), cc.v2(0, -1), cc.v2(0, 1)];
+        for (let dir of dirs) {
+            let model = this.cells[y + dir.y];
+            if (model) {
+                model = model[x + dir.x];
+                if (model && model.status == CELL_STATUS.ICE) {
+                    model.count--;
+                    this.pushToChangeModels(model);
+                    if (model.count <= 0) {
+                        model.toDie(this.curTime);
+                        this.addCrushEffect(this.curTime, cc.v2(model.x, model.y), step);
+                        this.cells[model.y][model.x] = null;
+                    }
+                    else {
+                        model.toIceCrack(this.curTime);
+                    }
+                }
+            }
+        }
+    }
+
     selectBack() {
         this.changeModels = [];// 发生改变的model，将作为返回值，给view播动作
         this.effectsQueue = []; // 动物消失，爆炸等特效
@@ -946,7 +1011,6 @@ export default class GameModel {
     }
 
     isCell(pos) {
-        cc.log("555555555555555", pos.y, pos.x);
         if (!this.cells[pos.y]) {
             return true;
         }
@@ -960,7 +1024,6 @@ export default class GameModel {
         return !isNoCell;
     }
     isStaticCell(pos) {
-        cc.log("555555555555555", pos.y, pos.x);
         if (!this.cells[pos.y]) {
             return true;
         }
