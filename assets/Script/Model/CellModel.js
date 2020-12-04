@@ -10,6 +10,7 @@ export default class CellModel {
         this.cmd = [];
         this.isDeath = false;
         this.objecCount = Math.floor(Math.random() * 1000);
+        this.code = 0;
     }
 
     init(type) {
@@ -22,6 +23,7 @@ export default class CellModel {
         }
         else if (type == g_obstacle.ice) {
             this.setStatus(CELL_STATUS.ICE);
+            this.count = 2;
         }
     }
 
@@ -47,6 +49,13 @@ export default class CellModel {
     }
     getStatus() {
         return this.status;
+    }
+
+    setCode(code) {
+        this.code = code;
+    }
+    getCode() {
+        return this.code;
     }
 
     moveToAndBack(pos) {
@@ -184,5 +193,13 @@ export default class CellModel {
             vCenter
         });
         this.isDeath = true;
+    }
+
+    toIceCrack(playTime) {
+        this.cmd.push({
+            action: "toIceCrack",
+            playTime: playTime,
+            keepTime: ANITIME.ICE_CRACK
+        });
     }
 }

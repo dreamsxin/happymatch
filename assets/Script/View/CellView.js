@@ -158,6 +158,12 @@ cc.Class({
                     , cc.fadeOut(ANITIME.DROP));
                 actionArray.push(spawn);
             }
+            else if (cmd[i].action == "toIceCrack") {
+                var callFunc = cc.callFunc(function(){
+                    this.node.getComponent(cc.Animation).play("iceCrack");
+                },this);
+                actionArray.push(callFunc);
+            }
             else {
                 cc.log("666666666", cmd[i].action);
             }

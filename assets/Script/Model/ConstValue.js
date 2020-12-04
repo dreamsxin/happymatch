@@ -1,4 +1,7 @@
 
+window.MAP_URL = "http://121.37.240.88:8102";
+window.IMAGE_URL = "http://121.37.240.88:8201/images";
+
 export const CELL_TYPE = {
     EMPTY : 0,
     A : 1,
@@ -51,7 +54,8 @@ export const ANITIME = {
     TIPS_ACTION_TAG:10000,
     SHOW:0.2,
     WRAP_TOTAL:0.7,
-    DROP:0.4
+    DROP:0.4,
+    ICE_CRACK:0.3
 }
 
 window.GAME_SAVE_HANDLER = 'handler_data';
@@ -73,4 +77,3 @@ window.INIT_GAME_SAVE_DATA = {
 };
 
 window.ITEMS_ADD_STEPS_CONDITION = 6;
-
