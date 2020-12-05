@@ -32,10 +32,8 @@ cc.Class({
             default: null,
         },
         loadingLabel:cc.Label,
-        loginButton: {
-            type: cc.Button,
-            default: null,
-        },
+        wechatLoginBtn: cc.Button,
+        phoneLoginBtn: cc.Button,
         worldSceneBGM:{
             type: cc.AudioClip,
             default: null,
@@ -51,9 +49,26 @@ cc.Class({
     start () {
     },
 
-    onLogin: function(){
+    onPhoneLogin: function(){
         this.loadingBar.node.active = true;
-        this.loginButton.node.active = false;
+        this.phoneLoginBtn.node.active = false;
+        this.wechatLoginBtn.node.active = false;
+        this.loadingBar.progress = 0;
+
+        cc.director.preloadScene("Game", function (completed, total, item) {
+            let prog = completed / total;
+            if (this.loadingBar.progress < prog) {
+                this.loadingBar.progress = prog;
+                this.loadingLabel.string = `${Math.floor(prog * 100)}%`;
+            }
+        }.bind(this), function (err, res) {
+            cc.director.loadScene("Game");
+        })
+    },
+    onWechatLogin: function(){
+        this.loadingBar.node.active = true;
+        this.phoneLoginBtn.node.active = false;
+        this.wechatLoginBtn.node.active = false;
         this.loadingBar.progress = 0;
 
         cc.director.preloadScene("Game", function (completed, total, item) {
